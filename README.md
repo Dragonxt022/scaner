@@ -186,6 +186,39 @@ O arquivo `artifacts/pdf-size-report.json` contem:
 - `npm run reindex:fast`: indexacao sem OCR, com execucao mais rapida
 - `npm run reindex:loop:fast`: loop de indexacao sem OCR
 
+## Inicializacao automatica no Windows 11
+
+O projeto agora inclui scripts para registrar a aplicacao no Agendador de Tarefas do Windows e iniciar no logon do usuario atual.
+
+Arquivos:
+
+- [scripts/windows/install-autostart.ps1](C:/apps/scaner/scripts/windows/install-autostart.ps1): registra a tarefa automatica
+- [scripts/windows/start-scaner.ps1](C:/apps/scaner/scripts/windows/start-scaner.ps1): executa `npm start` na raiz do projeto
+- [scripts/windows/uninstall-autostart.ps1](C:/apps/scaner/scripts/windows/uninstall-autostart.ps1): remove a tarefa automatica
+
+Para instalar:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\windows\install-autostart.ps1
+```
+
+Para testar sem reiniciar:
+
+```powershell
+Start-ScheduledTask -TaskName "Scaner Auto Start"
+```
+
+Logs de inicializacao:
+
+- `data/logs/scaner-autostart.out.log`
+- `data/logs/scaner-autostart.err.log`
+
+Para remover a inicializacao automatica:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\windows\uninstall-autostart.ps1
+```
+
 ## Solucao de problemas
 
 ### O comando `inventory:size` demora muito
