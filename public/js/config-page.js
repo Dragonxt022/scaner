@@ -97,6 +97,11 @@
     indexerStatusMode: document.querySelector('#indexerStatusMode'),
     indexerStatusText: document.querySelector('#indexerStatusText'),
     indexerUpdatedAt: document.querySelector('#indexerUpdatedAt'),
+    localLibraryFeedback: document.querySelector('#localLibraryFeedback'),
+    localLibraryList: document.querySelector('#localLibraryList'),
+    localLibrarySearch: document.querySelector('#localLibrarySearch'),
+    localLibraryStats: document.querySelector('#localLibraryStats'),
+    localLibrarySync: document.querySelector('#localLibrarySync'),
     maintenanceCandidates: document.querySelector('#maintenanceCandidates'),
     maintenanceClear: document.querySelector('#maintenanceClear'),
     maintenanceFeedback: document.querySelector('#maintenanceFeedback'),
@@ -219,6 +224,37 @@
     return `<article class="overview-stat"><span>${label}</span><strong>${value}</strong></article>`;
   }
 
+  function pill(label, tone = '') {
+    return `<span class="table-pill${tone ? ` ${tone}` : ''}">${escapeHtml(label)}</span>`;
+  }
+
+  function buildLocalFileUrl(relativePath) {
+    return `/acervo-local/${String(relativePath || '')
+      .split(/[\\/]+/)
+      .filter(Boolean)
+      .map((segment) => encodeURIComponent(segment))
+      .join('/')}`;
+  }
+
+  function getPrimaryFileUrl(item) {
+    return item?.local_file_url || (item?.local_relative_path ? buildLocalFileUrl(item.local_relative_path) : '') || item?.pdf_url || '#';
+  }
+
+  function getPrimaryFileLabel(item) {
+    return item?.source_kind === 'local' || item?.local_relative_path ? 'Abrir arquivo' : 'Abrir PDF';
+  }
+
+  function getReferenceUrl(item) {
+    if (item?.source_kind === 'local') {
+      return getPrimaryFileUrl(item);
+    }
+    return item?.detail_url || item?.pdf_url || '#';
+  }
+
+  function getReferenceLabel(item) {
+    return item?.source_kind === 'local' ? 'Origem local' : 'Origem';
+  }
+
   function normalizeText(value) {
     return String(value ?? '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
@@ -264,6 +300,7 @@
     if (state.runtime?.passwordResetRequests) renderPasswordResetRequests(state.runtime.passwordResetRequests.items || []);
     if (state.runtime?.accessLogs) renderAccessLogs(state.runtime.accessLogs.items || []);
     if (state.runtime?.searchLogs) renderSearchLogs(state.runtime.searchLogs.items || []);
+    if (state.runtime?.localLibrary) renderLocalLibrary(state.runtime.localLibrary.items || [], state.runtime.localLibrary.root || '');
     if (state.runtime?.failures) renderFailures(state.runtime.failures.items || []);
     if (state.runtime?.indexerStatus) renderIndexerStatus(state.runtime.indexerStatus);
   }
@@ -575,7 +612,7 @@
         {
           html: `
             <div class="table-actions">
-              <a class="ghost-button table-inline-button" href="${safe(item.pdf_url, '#')}" target="_blank" rel="noreferrer">PDF</a>
+              <a class="ghost-button table-inline-button" href="${safe(getPrimaryFileUrl(item), '#')}" target="_blank" rel="noreferrer">${getPrimaryFileLabel(item)}</a>
               ${item.index_status !== 'processing' && item.index_status !== 'paused'
                 ? `<button class="ghost-button table-inline-button queue-action-button" type="button" data-action="pause" data-id="${escapeHtml(item.id)}">Remover</button>`
                 : ''}
@@ -607,6 +644,9 @@
     elements.downloadMessage.textContent = safe(status.message || 'Aguardando inicio.');
     elements.downloadTotalProgressBar.style.width = `${progress}%`;
     elements.downloadTotalProgressLabel.textContent = `${progress}%`;
+    if (elements.downloadDestinationDir) {
+      elements.downloadDestinationDir.value = safe(status.destinationDir || 'data/local-acervo', 'data/local-acervo');
+    }
     elements.downloadOverwrite.checked = Boolean(status.overwrite);
     elements.downloadActiveList.innerHTML = (status.activeDownloads || []).length
       ? status.activeDownloads.map((item) => `
@@ -642,8 +682,8 @@
         {
           html: `
             <div class="table-actions">
-              <a class="ghost-button table-inline-button" href="${safe(item.pdf_url, '#')}" target="_blank" rel="noreferrer">PDF</a>
-              <a class="ghost-button table-inline-button" href="${safe(item.detail_url || item.pdf_url, '#')}" target="_blank" rel="noreferrer">Origem</a>
+              <a class="ghost-button table-inline-button" href="${safe(getPrimaryFileUrl(item), '#')}" target="_blank" rel="noreferrer">${getPrimaryFileLabel(item)}</a>
+              <a class="ghost-button table-inline-button" href="${safe(getReferenceUrl(item), '#')}" target="_blank" rel="noreferrer">${getReferenceLabel(item)}</a>
             </div>`,
           className: 'table-col-actions',
         },
@@ -742,25 +782,45 @@
       container,
       columns: [
         { label: 'Usuario' },
-        { label: 'CPF' },
         { label: 'Evento' },
-        { label: 'Metodo/Pagina' },
+        { label: 'Rota' },
         { label: 'Data' },
-        { label: 'IP' },
+        { label: 'Origem' },
         { label: 'Detalhes' },
       ],
       rows: filtered.map((item) => [
-        { html: escapeHtml(safe(item.full_name)) },
-        { html: escapeHtml(safe(item.cpf)) },
-        { html: escapeHtml(safe(item.event_type)) },
-        { html: escapeHtml(`${safe(item.method || '--')} ${safe(item.target_path || '--')}`) },
+        {
+          html: `
+            <div class="table-identity">
+              <strong>${escapeHtml(safe(item.full_name))}</strong>
+              <small>${escapeHtml(safe(item.cpf))} • ${escapeHtml(safe(item.role || '--'))}</small>
+            </div>`,
+        },
+        {
+          html: `
+            <div class="table-stacked">
+              ${pill(safe(item.event_type), 'tone-blue')}
+              <small>${escapeHtml(safe(item.method || '--'))}</small>
+            </div>`,
+        },
+        {
+          html: `
+            <div class="table-path">
+              <strong>${escapeHtml(safe(item.target_path || '--'))}</strong>
+            </div>`,
+        },
         { html: escapeHtml(formatTimestamp(item.created_at)) },
-        { html: escapeHtml(safe(item.ip_address || '--')) },
-        { html: escapeHtml(safe(item.details || '--')) },
+        {
+          html: `
+            <div class="table-stacked">
+              <strong>${escapeHtml(safe(item.ip_address || '--'))}</strong>
+              <small>${escapeHtml(safe(item.user_agent || '--'))}</small>
+            </div>`,
+        },
+        { html: `<div class="table-wrap">${escapeHtml(safe(item.details || '--'))}</div>` },
       ]),
       emptyTitle: 'Sem registros de acesso.',
       emptyCopy: 'Os eventos de login, logout e navegacao aparecem aqui.',
-      compact: true,
     });
   }
 
@@ -776,27 +836,41 @@
       container,
       columns: [
         { label: 'Usuario' },
-        { label: 'CPF' },
         { label: 'Tipo' },
         { label: 'Consulta' },
         { label: 'Resultados' },
-        { label: 'Classificacao' },
-        { label: 'Caixa/Ano' },
+        { label: 'Filtros' },
         { label: 'Data' },
       ],
       rows: filtered.map((item) => [
-        { html: escapeHtml(safe(item.full_name)) },
-        { html: escapeHtml(safe(item.cpf)) },
-        { html: escapeHtml(safe(item.search_type)) },
-        { html: escapeHtml(safe(item.query_text || '(sem termo)')) },
-        { html: formatNumber(item.result_total || 0) },
-        { html: escapeHtml(safe(item.classificacao || 'todas classificacoes')) },
-        { html: escapeHtml(`${safe(item.caixa || 'todas caixas')} / ${safe(item.ano || 'todos anos')}`) },
+        {
+          html: `
+            <div class="table-identity">
+              <strong>${escapeHtml(safe(item.full_name))}</strong>
+              <small>${escapeHtml(safe(item.cpf))}</small>
+            </div>`,
+        },
+        { html: pill(safe(item.search_type || 'text'), item.search_type === 'image' ? 'tone-violet' : 'tone-blue') },
+        {
+          html: `
+            <div class="table-stacked">
+              <strong>${escapeHtml(safe(item.query_text || '(sem termo)'))}</strong>
+              <small>pagina ${escapeHtml(String(item.page || 1))} • tamanho ${escapeHtml(String(item.page_size || 10))}</small>
+            </div>`,
+        },
+        { html: `<strong>${formatNumber(item.result_total || 0)}</strong>` },
+        {
+          html: `
+            <div class="table-stacked">
+              <small>Classificacao: ${escapeHtml(safe(item.classificacao || 'todas'))}</small>
+              <small>Caixa: ${escapeHtml(safe(item.caixa || 'todas'))}</small>
+              <small>Ano: ${escapeHtml(safe(item.ano || 'todos'))}</small>
+            </div>`,
+        },
         { html: escapeHtml(formatTimestamp(item.created_at)) },
       ]),
       emptyTitle: 'Sem historico de pesquisa.',
       emptyCopy: 'As consultas dos usuarios aparecem aqui.',
-      compact: true,
     });
   }
 
@@ -816,29 +890,89 @@
     const searches24h = searchLogs.filter((item) => within24h(item.created_at)).length;
     const access24h = accessLogs.filter((item) => within24h(item.created_at)).length;
 
-    renderTable({
-      container: elements.auditSummaryStats,
-      columns: [
-        { label: 'Acessos 24h' },
-        { label: 'Pesquisas 24h' },
-        { label: 'Usuarios rastreados' },
-        { label: 'IPs distintos' },
-      ],
-      rows: [[
-        { html: formatNumber(access24h) },
-        { html: formatNumber(searches24h) },
-        { html: formatNumber(uniqueUsers.size) },
-        { html: formatNumber(uniqueIps.size) },
-      ]],
-      emptyTitle: 'Sem consolidado.',
-      emptyCopy: 'Os indicadores de auditoria aparecem aqui.',
-      compact: true,
-    });
+    elements.auditSummaryStats.innerHTML = [
+      card('Acessos 24h', formatNumber(access24h)),
+      card('Pesquisas 24h', formatNumber(searches24h)),
+      card('Usuarios rastreados', formatNumber(uniqueUsers.size)),
+      card('IPs distintos', formatNumber(uniqueIps.size)),
+    ].join('');
 
     if (elements.auditSummaryFeedback) {
       elements.auditSummaryFeedback.textContent =
         `Auditoria consolidada com ${formatNumber(accessLogs.length)} evento(s) de acesso e ${formatNumber(searchLogs.length)} pesquisa(s) exibidos nesta tela.`;
     }
+  }
+
+  function renderLocalLibrary(items, root) {
+    if (!elements.localLibraryList) return;
+    const filtered = (items || []).filter((item) => matchesSearch(
+      item,
+      elements.localLibrarySearch?.value,
+      ['nome_arquivo', 'descricao', 'caixa', 'mime_type', 'index_status', 'local_relative_path'],
+    ));
+
+    if (elements.localLibraryStats) {
+      const pdfCount = filtered.filter((item) => String(item.mime_type || '').toLowerCase() === 'application/pdf').length;
+      const indexedCount = filtered.filter((item) => item.index_status === 'indexed').length;
+      const pendingCount = filtered.filter((item) => item.index_status === 'pending').length;
+      elements.localLibraryStats.innerHTML = [
+        card('Arquivos locais', formatNumber(filtered.length)),
+        card('PDFs locais', formatNumber(pdfCount)),
+        card('Indexados', formatNumber(indexedCount)),
+        card('Pendentes', formatNumber(pendingCount)),
+      ].join('');
+    }
+
+    renderTable({
+      container: elements.localLibraryList,
+      columns: [
+        { label: 'Arquivo' },
+        { label: 'Pasta / tipo' },
+        { label: 'Status' },
+        { label: 'Extracao' },
+        { label: 'Acesso', className: 'table-col-actions' },
+      ],
+      rows: filtered.map((item) => [
+        {
+          html: `
+            <div class="table-identity">
+              <strong>${escapeHtml(safe(item.nome_arquivo || item.descricao))}</strong>
+              <small>${escapeHtml(safe(item.descricao || '--'))}</small>
+            </div>`,
+        },
+        {
+          html: `
+            <div class="table-stacked">
+              <strong>${escapeHtml(safe(item.caixa || 'Acervo local'))}</strong>
+              <small>${escapeHtml(safe(item.mime_type || '--'))}</small>
+            </div>`,
+        },
+        {
+          html: `
+            <div class="table-stacked">
+              ${pill(formatQueueStatus(item.index_status), item.index_status === 'indexed' ? 'tone-green' : item.index_status === 'error' ? 'tone-red' : 'tone-blue')}
+              <small>${escapeHtml(formatTimestamp(item.updated_at))}</small>
+            </div>`,
+        },
+        {
+          html: `
+            <div class="table-stacked">
+              <strong>${escapeHtml(safe(item.extractor || 'aguardando fila'))}</strong>
+              <small>${formatNumber(item.text_length || 0)} caracteres • ${formatNumber(item.page_count || 0)} pagina(s)</small>
+            </div>`,
+        },
+        {
+          html: `
+            <div class="table-actions">
+              <a class="ghost-button table-inline-button" href="${safe(getPrimaryFileUrl(item), '#')}" target="_blank" rel="noreferrer">${getPrimaryFileLabel(item)}</a>
+              <a class="ghost-button table-inline-button" href="/document?id=${escapeHtml(String(item.id))}">Detalhes</a>
+            </div>`,
+          className: 'table-col-actions',
+        },
+      ]),
+      emptyTitle: 'Nenhum arquivo local sincronizado.',
+      emptyCopy: `Coloque arquivos em ${root || 'data/local-acervo'} e clique em sincronizar.`,
+    });
   }
 
   function renderMaintenanceInsights(insights) {
@@ -872,8 +1006,8 @@
             </div>
             ${item.index_error ? `<p class="error-copy">${safe(item.index_error)}</p>` : ''}
             <div class="failure-links">
-              <a href="${safe(item.pdf_url, '#')}" target="_blank" rel="noreferrer">Abrir PDF</a>
-              <a href="${safe(item.detail_url || item.pdf_url, '#')}" target="_blank" rel="noreferrer">Referencia</a>
+              <a href="${safe(getPrimaryFileUrl(item), '#')}" target="_blank" rel="noreferrer">${getPrimaryFileLabel(item)}</a>
+              <a href="${safe(getReferenceUrl(item), '#')}" target="_blank" rel="noreferrer">${getReferenceLabel(item)}</a>
             </div>
           </article>`).join('')
       : `<article class="empty-card"><h4>Nenhum candidato encontrado.</h4><p class="muted-copy">A fila selecionada nao retornou itens com o criterio atual.</p></article>`;
@@ -964,11 +1098,14 @@
     if (elements.passwordResetRequestList) {
       tasks.push(fetchJson('/api/admin/password-reset-requests?limit=80').then((value) => ['passwordResetRequests', value]));
     }
-    if (document.querySelector('#accessLogsList')) {
+    if (document.querySelector('#accessLogsList') || elements.auditSummaryStats) {
       tasks.push(fetchJson('/api/admin/activity/access-logs?limit=80').then((value) => ['accessLogs', value]));
     }
-    if (document.querySelector('#searchLogsList')) {
+    if (document.querySelector('#searchLogsList') || elements.auditSummaryStats) {
       tasks.push(fetchJson('/api/admin/activity/search-logs?limit=80').then((value) => ['searchLogs', value]));
+    }
+    if (elements.localLibraryList) {
+      tasks.push(fetchJson('/api/admin/local-library?limit=500').then((value) => ['localLibrary', value]));
     }
 
     const entries = await Promise.all(tasks);
@@ -997,6 +1134,9 @@
     }
     if (state.runtime.searchLogs) {
       renderSearchLogs(state.runtime.searchLogs.items || []);
+    }
+    if (state.runtime.localLibrary) {
+      renderLocalLibrary(state.runtime.localLibrary.items || [], state.runtime.localLibrary.root || '');
     }
     if (elements.auditSummaryStats) {
       renderAuditSummary(state.runtime.accessLogs?.items || [], state.runtime.searchLogs?.items || []);
@@ -1316,6 +1456,7 @@
       elements.passwordResetSearch,
       elements.accessLogSearch,
       elements.searchLogSearch,
+      elements.localLibrarySearch,
       elements.indexFailureSearch,
       elements.indexerBatchSearch,
       elements.indexerOperationSearch,
@@ -1447,7 +1588,7 @@
         try {
           await runPost('/api/admin/downloads/start', {
           concurrency: Number(elements.downloadConcurrency.value || 3),
-          destinationDir: elements.downloadDestinationDir.value.trim() || 'downloads',
+          destinationDir: elements.downloadDestinationDir.value.trim() || 'data/local-acervo',
           overwrite: elements.downloadOverwrite.checked,
           retryCount: Number(elements.downloadRetryCount.value || 2),
           timeoutMs: Number(elements.downloadTimeoutMs.value || 30000),
@@ -1674,6 +1815,20 @@
           elements.enrichmentFeedback.textContent = 'Parada solicitada.';
         } catch (error) {
           elements.enrichmentFeedback.textContent = error.message;
+        }
+      });
+    }
+
+    if (elements.localLibrarySync) {
+      elements.localLibrarySync.addEventListener('click', async () => {
+        elements.localLibraryFeedback.textContent = 'Sincronizando pasta local com o acervo...';
+        try {
+          const result = await runPost('/api/admin/local-library/sync');
+          await refreshRuntime();
+          elements.localLibraryFeedback.textContent =
+            `${formatNumber(result.totalFiles || 0)} arquivo(s) sincronizados a partir de ${safe(result.root)}.`;
+        } catch (error) {
+          elements.localLibraryFeedback.textContent = error.message;
         }
       });
     }

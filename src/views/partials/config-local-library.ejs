@@ -1,0 +1,23 @@
+<article class="config-card">
+  <div class="section-head">
+    <div>
+      <p class="panel-kicker">Acervo local</p>
+      <h3>Biblioteca de ingestao</h3>
+    </div>
+    <div class="config-actions">
+      <button id="localLibrarySync" type="button">Sincronizar pasta</button>
+    </div>
+  </div>
+
+  <div id="localLibraryStats" class="stats-grid"></div>
+  <p class="config-note" id="localLibraryFeedback">Coloque arquivos em <strong>`data/local-acervo`</strong> e sincronize para incorporar ao acervo.</p>
+
+  <div class="table-toolbar table-toolbar-split">
+    <label>
+      <span>Buscar arquivos locais</span>
+      <input id="localLibrarySearch" type="text" placeholder="Nome, pasta, tipo, status" />
+    </label>
+  </div>
+
+  <div id="localLibraryList" class="table-shell"></div>
+</article>

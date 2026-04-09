@@ -39,6 +39,7 @@ const {
   updateUser,
 } = require('../services/auth');
 const { listAccessLogs, listSearchLogs, recordAccessLog } = require('../services/audit');
+const { listLocalLibraryItems, syncLocalLibrary, getLocalLibraryRoot } = require('../services/local-library');
 
 const router = express.Router();
 
@@ -86,6 +87,16 @@ router.get('/activity/search-logs', (request, response) => {
   const limit = clampInteger(request.query?.limit, { fallback: 100, min: 1, max: 500 });
   response.json({
     items: listSearchLogs(limit),
+  });
+});
+
+router.get('/local-library', (request, response) => {
+  const limit = clampInteger(request.query?.limit, { fallback: 300, min: 1, max: 1000 });
+  const items = listLocalLibraryItems(limit);
+  response.json({
+    items,
+    root: getLocalLibraryRoot(),
+    total: items.length,
   });
 });
 
@@ -277,6 +288,10 @@ router.post('/downloads/stop', async (_request, response) => {
 
 router.post('/sync-catalog', async (_request, response) => {
   response.json(await syncCatalogFromArtifacts());
+});
+
+router.post('/local-library/sync', (_request, response) => {
+  response.json(syncLocalLibrary());
 });
 
 router.post('/reindex', async (request, response) => {

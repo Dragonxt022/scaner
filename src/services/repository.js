@@ -1,5 +1,6 @@
 const { getDb } = require('../db/client');
 const { analyzeTextQuality, extractWords, normalizeSearchTerm } = require('../utils/text');
+const { buildLocalLibraryUrl } = require('../utils/local-files');
 
 const CACHE_TTL_MS = 5000;
 const SEARCH_COUNT_TTL_MS = 15000;
@@ -51,7 +52,10 @@ function ensureDocumentsColumns() {
     }
   };
 
+  addColumn('source_kind', "source_kind TEXT NOT NULL DEFAULT 'remote'");
   addColumn('content_key', 'content_key TEXT');
+  addColumn('local_relative_path', 'local_relative_path TEXT');
+  addColumn('mime_type', 'mime_type TEXT');
   addColumn('index_attempts', 'index_attempts INTEGER NOT NULL DEFAULT 0');
   addColumn('last_index_method', 'last_index_method TEXT');
   addColumn('last_error_at', 'last_error_at TEXT');
@@ -88,10 +92,13 @@ const upsertDocumentStatement = () =>
   getDb().prepare(`
     INSERT INTO documents (
       source_key,
+      source_kind,
       content_key,
       hash_verificacao,
       pdf_url,
       detail_url,
+      local_relative_path,
+      mime_type,
       nome_arquivo,
       classificacao,
       caixa,
@@ -101,10 +108,13 @@ const upsertDocumentStatement = () =>
       updated_at
     ) VALUES (
       @source_key,
+      @source_kind,
       @content_key,
       @hash_verificacao,
       @pdf_url,
       @detail_url,
+      @local_relative_path,
+      @mime_type,
       @nome_arquivo,
       @classificacao,
       @caixa,
@@ -114,10 +124,19 @@ const upsertDocumentStatement = () =>
       CURRENT_TIMESTAMP
     )
     ON CONFLICT(source_key) DO UPDATE SET
+      source_kind = excluded.source_kind,
       content_key = excluded.content_key,
       hash_verificacao = excluded.hash_verificacao,
       pdf_url = excluded.pdf_url,
       detail_url = excluded.detail_url,
+      local_relative_path = CASE
+        WHEN COALESCE(NULLIF(excluded.local_relative_path, ''), '') <> '' THEN excluded.local_relative_path
+        ELSE documents.local_relative_path
+      END,
+      mime_type = CASE
+        WHEN COALESCE(NULLIF(excluded.mime_type, ''), '') <> '' THEN excluded.mime_type
+        ELSE documents.mime_type
+      END,
       nome_arquivo = excluded.nome_arquivo,
       classificacao = excluded.classificacao,
       caixa = excluded.caixa,
@@ -136,7 +155,13 @@ function replaceDocuments(documents) {
   const db = getDb();
   const transaction = db.transaction((items) => {
     for (const item of items) {
-      statement.run(item);
+      statement.run({
+        detail_url: '',
+        local_relative_path: null,
+        mime_type: '',
+        source_kind: 'remote',
+        ...item,
+      });
     }
   });
 
@@ -144,9 +169,67 @@ function replaceDocuments(documents) {
   clearRepositoryCaches();
 }
 
+function syncDocumentsForSource(sourcePrefix, documents) {
+  ensureDocumentsColumns();
+  const normalizedPrefix = String(sourcePrefix || '').trim();
+  if (!normalizedPrefix) {
+    throw new Error('Prefixo de origem invalido para sincronizacao.');
+  }
+
+  const statement = upsertDocumentStatement();
+  const db = getDb();
+  const items = Array.isArray(documents) ? documents : [];
+  const sourceKeys = items
+    .map((item) => String(item?.source_key || '').trim())
+    .filter(Boolean);
+
+  const transaction = db.transaction(() => {
+    for (const item of items) {
+      statement.run({
+        detail_url: '',
+        local_relative_path: null,
+        mime_type: '',
+        source_kind: 'remote',
+        ...item,
+      });
+    }
+
+    if (!sourceKeys.length) {
+      db.prepare('DELETE FROM documents WHERE source_key LIKE ?').run(`${normalizedPrefix}%`);
+      return;
+    }
+
+    const placeholders = sourceKeys.map(() => '?').join(', ');
+    db.prepare(`
+      DELETE FROM documents
+      WHERE source_key LIKE ?
+        AND source_key NOT IN (${placeholders})
+    `).run(`${normalizedPrefix}%`, ...sourceKeys);
+  });
+
+  transaction();
+  clearRepositoryCaches();
+}
+
 function getContentKeyByDocumentId(documentId) {
   ensureDocumentsColumns();
   return getDb().prepare(`SELECT content_key FROM documents WHERE id = ?`).get(documentId)?.content_key;
+}
+
+function applyPreferredFileAccess(item) {
+  if (!item) {
+    return item;
+  }
+
+  const localRelativePath = String(item.local_relative_path || '').trim();
+  if (!localRelativePath) {
+    return item;
+  }
+
+  return {
+    ...item,
+    local_file_url: buildLocalLibraryUrl(localRelativePath),
+  };
 }
 
 function getDocumentGroupIds(documentId) {
@@ -233,6 +316,8 @@ function listTextCleanupCandidates(strategy = 'low-quality', limit = 20, sampleS
       d.ano,
       d.pdf_url,
       d.detail_url,
+      d.local_relative_path,
+      d.mime_type,
       d.index_status,
       d.last_index_method,
       d.text_length,
@@ -280,10 +365,10 @@ function listTextCleanupCandidates(strategy = 'low-quality', limit = 20, sampleS
   const rows = db.prepare(`${sql} LIMIT ?`).all(...params, normalizedSampleSize);
   const ranked = rows.map((item) => {
     const quality = analyzeTextQuality(item.extracted_text || '');
-    return {
+    return applyPreferredFileAccess({
       ...item,
       quality,
-    };
+    });
   });
 
   if (strategy === 'long-lines') {
@@ -409,7 +494,14 @@ function getDocumentsToIndex(limit = 20, options = {}) {
 
   return getDb()
     .prepare(`
-      SELECT MIN(id) AS id, content_key, pdf_url, nome_arquivo
+      SELECT
+        MIN(id) AS id,
+        content_key,
+        MAX(pdf_url) AS pdf_url,
+        MAX(nome_arquivo) AS nome_arquivo,
+        MAX(source_kind) AS source_kind,
+        MAX(local_relative_path) AS local_relative_path,
+        MAX(mime_type) AS mime_type
       FROM documents
       WHERE index_status IN (${placeholders})
       GROUP BY content_key, pdf_url, nome_arquivo
@@ -427,7 +519,7 @@ function getDocumentsToIndex(limit = 20, options = {}) {
 
 function getDocumentById(id) {
   ensureDocumentsColumns();
-  return getDb()
+  return applyPreferredFileAccess(getDb()
     .prepare(`
       SELECT
         d.*,
@@ -445,7 +537,7 @@ function getDocumentById(id) {
       LEFT JOIN document_preview_images dpi ON dpi.document_id = d.id
       WHERE d.id = ?
     `)
-    .get(id);
+    .get(id));
 }
 
 function getDocumentDecorations(documentIds = []) {
@@ -555,6 +647,7 @@ function getDocumentsForEnrichment(limit = 10, options = {}) {
   return getDb().prepare(`
     SELECT
       d.id,
+      d.mime_type,
       d.pdf_url,
       d.nome_arquivo,
       d.descricao,
@@ -611,6 +704,23 @@ function getFilters() {
     caixas: mapValues('caixa'),
     classificacoes: mapValues('classificacao'),
   };
+}
+
+function listDocumentsBySourceKind(sourceKind, limit = 200) {
+  ensureDocumentsColumns();
+  return getDb()
+    .prepare(`
+      SELECT
+        d.*,
+        dc.extractor,
+        dc.extracted_text
+      FROM documents d
+      LEFT JOIN document_contents dc ON dc.document_id = d.id
+      WHERE d.source_kind = ?
+      ORDER BY datetime(COALESCE(d.updated_at, d.created_at)) DESC, d.id DESC
+      LIMIT ?
+    `)
+    .all(String(sourceKind || '').trim(), Math.max(1, Math.min(1000, Number(limit || 200))));
 }
 
 function getStats() {
@@ -700,6 +810,8 @@ function getIndexerQueueDetails(options = {}) {
       MAX(d.ano) AS ano,
       MAX(d.pdf_url) AS pdf_url,
       MAX(d.detail_url) AS detail_url,
+      MAX(d.local_relative_path) AS local_relative_path,
+      MAX(d.mime_type) AS mime_type,
       MAX(d.index_error) AS index_error,
       MAX(d.last_error_at) AS last_error_at,
       MAX(d.last_index_method) AS last_index_method,
@@ -726,7 +838,7 @@ function getIndexerQueueDetails(options = {}) {
   `).all(...params, normalizedLimit);
 
   return {
-    items: rows,
+    items: rows.map(applyPreferredFileAccess),
     limit: normalizedLimit,
     search: normalizedSearch,
     status: normalizedStatus,
@@ -741,7 +853,7 @@ function getIndexerQueueItem(documentId) {
     return null;
   }
 
-  return db.prepare(`
+  return applyPreferredFileAccess(db.prepare(`
     SELECT
       MIN(d.id) AS id,
       d.content_key,
@@ -753,6 +865,8 @@ function getIndexerQueueItem(documentId) {
       MAX(d.ano) AS ano,
       MAX(d.pdf_url) AS pdf_url,
       MAX(d.detail_url) AS detail_url,
+      MAX(d.local_relative_path) AS local_relative_path,
+      MAX(d.mime_type) AS mime_type,
       MAX(d.index_error) AS index_error,
       MAX(d.last_error_at) AS last_error_at,
       MAX(d.last_index_method) AS last_index_method,
@@ -769,7 +883,7 @@ function getIndexerQueueItem(documentId) {
       WHERE id = ?
     )
     GROUP BY d.content_key
-  `).get(normalizedId);
+  `).get(normalizedId));
 }
 
 function setIndexerQueueStatus(documentId, targetStatus) {
@@ -821,6 +935,8 @@ function getIndexFailures(limit = 50) {
         MAX(ano) AS ano,
         MAX(pdf_url) AS pdf_url,
         MAX(detail_url) AS detail_url,
+        MAX(local_relative_path) AS local_relative_path,
+        MAX(mime_type) AS mime_type,
         MAX(index_error) AS index_error,
         MAX(last_error_at) AS last_error_at,
         MAX(last_index_method) AS last_index_method,
@@ -831,7 +947,8 @@ function getIndexFailures(limit = 50) {
       ORDER BY datetime(MAX(last_error_at)) DESC, MIN(id) DESC
       LIMIT ?
     `)
-    .all(limit);
+    .all(limit)
+    .map(applyPreferredFileAccess);
 }
 
 function getMaintenanceStrategyWhere(strategy) {
@@ -882,6 +999,8 @@ function listMaintenanceCandidates(strategy, limit = 20) {
       MAX(d.ano) AS ano,
       MAX(d.pdf_url) AS pdf_url,
       MAX(d.detail_url) AS detail_url,
+      MAX(d.local_relative_path) AS local_relative_path,
+      MAX(d.mime_type) AS mime_type,
       MAX(d.index_status) AS index_status,
       MAX(d.last_index_method) AS last_index_method,
       MAX(d.index_attempts) AS index_attempts,
@@ -898,7 +1017,34 @@ function listMaintenanceCandidates(strategy, limit = 20) {
       COALESCE(MAX(d.text_length), 0) ASC,
       MIN(d.id) DESC
     LIMIT ?
-  `).all(limit);
+  `).all(limit).map(applyPreferredFileAccess);
+}
+
+function attachLocalFileToDocumentsByPdfUrl(pdfUrl, localRelativePath, mimeType = 'application/pdf') {
+  ensureDocumentsColumns();
+  const normalizedPdfUrl = String(pdfUrl || '').trim();
+  const normalizedRelativePath = String(localRelativePath || '').trim();
+  const normalizedMimeType = String(mimeType || '').trim();
+
+  if (!normalizedPdfUrl || !normalizedRelativePath) {
+    return { affectedDocuments: 0 };
+  }
+
+  const result = getDb().prepare(`
+    UPDATE documents
+    SET
+      local_relative_path = ?,
+      mime_type = CASE
+        WHEN COALESCE(NULLIF(?, ''), '') <> '' THEN ?
+        ELSE mime_type
+      END,
+      updated_at = CURRENT_TIMESTAMP
+    WHERE pdf_url = ?
+  `).run(normalizedRelativePath, normalizedMimeType, normalizedMimeType, normalizedPdfUrl);
+
+  clearRepositoryCaches();
+
+  return { affectedDocuments: result.changes };
 }
 
 function resetDocumentsByIds(documentIds, options = {}) {
@@ -1409,7 +1555,7 @@ function searchDocuments(params) {
     }
 
     return {
-      items: items.map((item) => ({
+      items: items.map((item) => applyPreferredFileAccess({
         ...item,
         score_breakdown: buildFastScore(item, rawQuery, metadataTerms),
       })),
@@ -1441,7 +1587,7 @@ function searchDocuments(params) {
     .all(...baseValues, limit, offset);
 
   return {
-    items: itemsPage.map((item) => ({
+    items: itemsPage.map((item) => applyPreferredFileAccess({
       ...item,
       score_breakdown: buildFastScore(item, rawQuery, metadataTerms),
     })),
@@ -1463,14 +1609,17 @@ module.exports = {
   getIndexerQueueStats,
   getMaintenanceInsights,
   listMaintenanceCandidates,
+  listDocumentsBySourceKind,
   listTextCleanupCandidates,
   getStats,
   markDocumentError,
   markDocumentProcessing,
+  attachLocalFileToDocumentsByPdfUrl,
   registerDocumentAccess,
   recoverProcessingDocuments,
   resetDocumentsByIds,
   replaceDocuments,
+  syncDocumentsForSource,
   rewriteDocumentContent,
   setIndexerQueueStatus,
   resetIndexing,

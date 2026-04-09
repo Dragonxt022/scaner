@@ -277,3 +277,62 @@ test('documento mais acessado sobe no ranque quando a relevancia e equivalente',
     fs.rmSync(tempDir, { recursive: true, force: true });
   }
 });
+
+test('documento remoto com arquivo baixado preserva espelho local e expõe link local preferencial', async () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'scaner-test-'));
+  const dbPath = path.join(tempDir, 'search.sqlite');
+
+  try {
+    const { repository, search, closeDatabase } = loadFreshSearchStack(dbPath);
+    try {
+      repository.replaceDocuments([
+        {
+          source_key: 'doc-local-mirror',
+          content_key: 'content-local-mirror',
+          hash_verificacao: 'LOC-1',
+          pdf_url: 'https://example.com/espelho.pdf',
+          detail_url: 'https://example.com/espelho',
+          nome_arquivo: 'espelho.pdf',
+          classificacao: 'Contratos',
+          caixa: '3',
+          descricao: 'Contrato com espelho local',
+          ano: '2026',
+        },
+      ]);
+
+      repository.attachLocalFileToDocumentsByPdfUrl(
+        'https://example.com/espelho.pdf',
+        'downloads/espelho.pdf',
+        'application/pdf',
+      );
+
+      repository.replaceDocuments([
+        {
+          source_key: 'doc-local-mirror',
+          content_key: 'content-local-mirror',
+          hash_verificacao: 'LOC-1',
+          pdf_url: 'https://example.com/espelho.pdf',
+          detail_url: 'https://example.com/espelho',
+          nome_arquivo: 'espelho.pdf',
+          classificacao: 'Contratos',
+          caixa: '3',
+          descricao: 'Contrato com espelho local',
+          ano: '2026',
+        },
+      ]);
+
+      const document = repository.getDocumentById(1);
+      const result = search.listDocuments({ q: 'espelho local', page: 1, pageSize: 10 });
+
+      assert.equal(document.local_relative_path, 'downloads/espelho.pdf');
+      assert.equal(result.items.length, 1);
+      assert.equal(result.items[0].local_relative_path, 'downloads/espelho.pdf');
+      assert.equal(result.items[0].local_file_url, '/acervo-local/downloads/espelho.pdf');
+      assert.equal(result.items[0].pdf_url, 'https://example.com/espelho.pdf');
+    } finally {
+      closeDatabase();
+    }
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});

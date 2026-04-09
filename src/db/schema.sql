@@ -3,10 +3,13 @@ PRAGMA foreign_keys = ON;
 CREATE TABLE IF NOT EXISTS documents (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   source_key TEXT NOT NULL UNIQUE,
+  source_kind TEXT NOT NULL DEFAULT 'remote',
   content_key TEXT NOT NULL,
   hash_verificacao TEXT,
   pdf_url TEXT NOT NULL,
   detail_url TEXT,
+  local_relative_path TEXT,
+  mime_type TEXT,
   nome_arquivo TEXT,
   classificacao TEXT,
   caixa TEXT,

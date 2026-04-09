@@ -7,11 +7,13 @@ const searchRoutes = require('./routes/search');
 const documentRoutes = require('./routes/documents');
 const adminRoutes = require('./routes/admin');
 const { attachAuthContext, enforceHttps, requireAdminApi, requireAuthApi } = require('./middlewares/auth');
+const { ensureLocalLibraryRoot } = require('./services/local-library');
 
 function createApp() {
   const app = express();
   const publicDir = path.join(process.cwd(), 'public');
   const mediaDir = path.join(process.cwd(), 'data', 'media');
+  const localLibraryDir = ensureLocalLibraryRoot();
   const viewsDir = path.join(process.cwd(), 'src', 'views');
 
   app.disable('x-powered-by');
@@ -42,6 +44,18 @@ function createApp() {
     index: false,
   }));
   app.use('/media', express.static(mediaDir, {
+    dotfiles: 'ignore',
+    etag: true,
+    fallthrough: true,
+    index: false,
+  }));
+  app.use('/acervo-local', (request, response, next) => {
+    if (request.authUser) {
+      next();
+      return;
+    }
+    response.status(401).end('Sessao expirada ou acesso nao autenticado.');
+  }, express.static(localLibraryDir, {
     dotfiles: 'ignore',
     etag: true,
     fallthrough: true,

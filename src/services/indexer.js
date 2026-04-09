@@ -1,6 +1,7 @@
 const config = require('../config');
 const { extractRemotePdfText } = require('./pdf-text');
 const { enrichDocumentById } = require('./document-enrichment');
+const { extractLocalDocumentText } = require('./local-document-text');
 const {
   getDocumentsToIndex,
   markDocumentError,
@@ -18,16 +19,18 @@ async function processDocument(document, options = {}) {
   markDocumentProcessing(document.id, mode);
 
   try {
-    const extracted = await extractRemotePdfText(document.pdf_url, {
-      mode,
-      onStage: (stage, payload) => {
-        if (typeof options.onStage === 'function') {
-          options.onStage(document, stage, payload);
-        }
-      },
-    });
+    const extracted = document.source_kind === 'local' || document.local_relative_path
+      ? await extractLocalDocumentText(document)
+      : await extractRemotePdfText(document.pdf_url, {
+          mode,
+          onStage: (stage, payload) => {
+            if (typeof options.onStage === 'function') {
+              options.onStage(document, stage, payload);
+            }
+          },
+        });
     if (!extracted.text) {
-      throw new Error('O PDF nao retornou texto pesquisavel.');
+      throw new Error('O documento nao retornou texto pesquisavel.');
     }
 
     saveDocumentContent(document.id, extracted.text, extracted);

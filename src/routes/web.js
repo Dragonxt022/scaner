@@ -108,7 +108,15 @@ router.get('/config/logs', requireAdminPage, (request, response) => {
 });
 
 router.get('/config/audit', requireAdminPage, (request, response) => {
-  renderConfigPage(response, request, 'audit');
+  response.redirect(302, '/config/access-logs');
+});
+
+router.get('/config/access-logs', requireAdminPage, (request, response) => {
+  renderConfigPage(response, request, 'accessLogs');
+});
+
+router.get('/config/search-history', requireAdminPage, (request, response) => {
+  renderConfigPage(response, request, 'searchHistory');
 });
 
 router.get('/config/maintenance', requireAdminPage, (request, response) => {
@@ -117,6 +125,10 @@ router.get('/config/maintenance', requireAdminPage, (request, response) => {
 
 router.get('/config/enrichment', requireAdminPage, (request, response) => {
   renderConfigPage(response, request, 'enrichment');
+});
+
+router.get('/config/local-library', requireAdminPage, (request, response) => {
+  renderConfigPage(response, request, 'localLibrary');
 });
 
 router.get('/config/users', requireAdminPage, (request, response) => {

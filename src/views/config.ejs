@@ -10,10 +10,15 @@
       title: 'Usuarios, perfis e credenciais',
       copy: 'Gerencie acessos por CPF, politicas de senha, recuperacao e trilha administrativa.',
     },
-    audit: {
+    accessLogs: {
       kicker: 'Rastreabilidade',
-      title: 'Auditoria detalhada de usuarios',
-      copy: 'Acompanhe acessos, paginas consultadas, pesquisas executadas, IPs e comportamento de uso.',
+      title: 'Acessos de usuarios',
+      copy: 'Acompanhe logins, navegacao, rotas acessadas, metodos, IPs e eventos operacionais.',
+    },
+    searchHistory: {
+      kicker: 'Rastreabilidade',
+      title: 'Historico de pesquisas',
+      copy: 'Consulte termos pesquisados, filtros usados, volume de resultados e comportamento de consulta.',
     },
     settings: {
       kicker: 'Preferencias',
@@ -44,6 +49,11 @@
       kicker: 'IA e midia',
       title: 'Enriquecimento de conteudo',
       copy: 'Controle resumos, miniaturas, modelos e rotinas de enriquecimento do acervo.',
+    },
+    localLibrary: {
+      kicker: 'Acervo local',
+      title: 'Biblioteca de ingestao local',
+      copy: 'Sincronize arquivos colocados em data/local-acervo e alimente o acervo com links servidos pelo proprio sistema.',
     },
   };
   const currentSection = sectionMeta[activeSection] || sectionMeta.dashboard;
@@ -86,8 +96,12 @@
             <%- include('partials/config-logs') %>
           <% } %>
 
-          <% if (activeSection === 'audit') { %>
-            <%- include('partials/config-audit') %>
+          <% if (activeSection === 'accessLogs') { %>
+            <%- include('partials/config-access-logs') %>
+          <% } %>
+
+          <% if (activeSection === 'searchHistory') { %>
+            <%- include('partials/config-search-history') %>
           <% } %>
 
           <% if (activeSection === 'maintenance') { %>
@@ -96,6 +110,10 @@
 
           <% if (activeSection === 'enrichment') { %>
             <%- include('partials/config-enrichment') %>
+          <% } %>
+
+          <% if (activeSection === 'localLibrary') { %>
+            <%- include('partials/config-local-library') %>
           <% } %>
 
           <% if (activeSection === 'users') { %>

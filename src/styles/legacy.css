@@ -49,6 +49,12 @@ a {
   min-height: 100vh;
 }
 
+body[data-page^='config-'] {
+  background:
+    radial-gradient(circle at top left, rgba(14, 165, 233, 0.08), transparent 20%),
+    linear-gradient(180deg, #f3f7fb 0%, #edf3f8 100%);
+}
+
 .topbar {
   align-items: center;
   background: rgba(255, 255, 255, 0.96);
@@ -59,6 +65,12 @@ a {
   position: sticky;
   top: 0;
   z-index: 10;
+}
+
+body[data-page^='config-'] .topbar {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.82);
+  padding: 18px 28px 14px;
 }
 
 .brand {
@@ -1946,29 +1958,42 @@ body.terms-locked {
 .config-admin-layout {
   align-items: start;
   display: grid;
-  gap: 24px;
-  grid-template-columns: minmax(260px, 290px) minmax(0, 1fr);
-  margin-top: 24px;
+  gap: 0;
+  grid-template-columns: 320px minmax(0, 1fr);
+  margin-top: 0;
+  min-height: calc(100vh - 72px);
+}
+
+.config-page {
+  margin: 0;
+  max-width: none;
+  padding: 0;
 }
 
 .config-sidebar {
+  align-self: stretch;
   min-width: 0;
   position: sticky;
-  top: 90px;
-  align-self: start;
+  top: 67px;
+}
+
+.config-shell .config-sidebar {
+  height: calc(100vh - 67px);
 }
 
 .config-sidebar-card {
   background:
-    radial-gradient(circle at top, rgba(86, 199, 255, 0.16), transparent 34%),
-    linear-gradient(180deg, #14213d 0%, #182847 55%, #101a2f 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 28px;
-  box-shadow: 0 24px 44px rgba(15, 23, 42, 0.2);
+    radial-gradient(circle at top left, rgba(56, 189, 248, 0.2), transparent 28%),
+    linear-gradient(180deg, #10213b 0%, #112640 48%, #0b172b 100%);
+  border: 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0;
+  box-shadow: none;
   color: #e5eefb;
-  max-height: calc(100vh - 112px);
+  height: 100%;
+  max-height: none;
   overflow-y: auto;
-  padding: 24px 20px;
+  padding: 28px 22px 24px;
   scrollbar-width: thin;
   scrollbar-color: rgba(125, 211, 252, 0.38) rgba(255, 255, 255, 0.06);
 }
@@ -1989,8 +2014,8 @@ body.terms-locked {
 
 .config-sidebar-profile {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  margin-bottom: 18px;
-  padding-bottom: 18px;
+  margin-bottom: 22px;
+  padding-bottom: 22px;
 }
 
 .config-sidebar-brand {
@@ -2002,20 +2027,20 @@ body.terms-locked {
 .config-sidebar-brand-mark {
   align-items: center;
   background: linear-gradient(135deg, #24d3ee, #5c9cff);
-  border-radius: 16px;
+  border-radius: 18px;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
   color: #08111f;
   display: inline-flex;
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 700;
-  height: 42px;
+  height: 48px;
   justify-content: center;
-  width: 42px;
+  width: 48px;
 }
 
 .config-sidebar-profile h3 {
   color: #fff;
-  font-size: 1.2rem;
+  font-size: 1.28rem;
   font-weight: 600;
   letter-spacing: -0.02em;
   margin: 0;
@@ -2028,27 +2053,28 @@ body.terms-locked {
 
 .config-sidebar-user {
   color: #fff;
-  font-size: 1rem;
+  font-size: 1.02rem;
   font-weight: 600;
   line-height: 1.4;
-  margin: 14px 0 0;
+  margin: 16px 0 0;
 }
 
 .config-nav-group + .config-nav-group {
-  margin-top: 18px;
+  margin-top: 22px;
 }
 
 .config-nav-title {
   color: rgba(191, 219, 254, 0.66);
-  font-size: 0.74rem;
-  letter-spacing: 0.08em;
-  margin: 0 0 10px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  margin: 0 0 12px;
   text-transform: uppercase;
 }
 
 .config-nav {
   display: grid;
-  gap: 8px;
+  gap: 10px;
 }
 
 .config-nav-toggle {
@@ -2183,6 +2209,120 @@ body.terms-locked {
   min-width: 0;
 }
 
+body[data-page^='config-'] .config-nav-toggle {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  margin-bottom: 12px;
+  min-height: 46px;
+  padding: 0 16px;
+}
+
+body[data-page^='config-'] .config-nav-toggle span {
+  line-height: 1.4;
+}
+
+body[data-page^='config-'] .config-nav-toggle::after {
+  content: '▾';
+}
+
+body[data-page^='config-'] .config-nav-subgroup {
+  gap: 10px;
+}
+
+body[data-page^='config-'] .config-nav-subgroup + .config-nav-subgroup {
+  margin-top: 10px;
+}
+
+body[data-page^='config-'] .config-nav-subtitle {
+  margin: 0;
+  padding-left: 2px;
+}
+
+body[data-page^='config-'] .config-nav-button {
+  align-items: center;
+  border-radius: 18px;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 40px minmax(0, 1fr);
+  min-height: 58px;
+  padding: 11px 14px;
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease, transform 120ms ease, box-shadow 120ms ease;
+}
+
+body[data-page^='config-'] .config-nav-button-sub {
+  margin-left: 0;
+  min-height: 54px;
+  width: 100%;
+}
+
+body[data-page^='config-'] .config-nav-button:hover {
+  box-shadow: 0 10px 20px rgba(8, 47, 73, 0.14);
+  transform: translateX(3px);
+}
+
+body[data-page^='config-'] .config-nav-icon {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  display: inline-flex;
+  height: 40px;
+  justify-content: center;
+  width: 40px;
+}
+
+body[data-page^='config-'] .config-nav-icon svg {
+  fill: none;
+  height: 18px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+  width: 18px;
+}
+
+body[data-page^='config-'] .config-nav-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+body[data-page^='config-'] .config-nav-copy strong {
+  color: inherit;
+  font-size: 0.94rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+body[data-page^='config-'] .config-nav-copy small {
+  color: rgba(226, 232, 240, 0.62);
+  font-size: 0.76rem;
+  line-height: 1.35;
+}
+
+body[data-page^='config-'] .config-workspace {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0));
+  padding: 28px 32px 40px;
+}
+
+body[data-page^='config-'] .config-page-head {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.46));
+  border: 1px solid rgba(219, 229, 238, 0.9);
+  border-radius: 28px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
+  padding: 28px 28px 24px;
+}
+
+body[data-page^='config-'] .config-card {
+  border: 1px solid rgba(219, 229, 238, 0.92);
+  padding: 22px;
+}
+
+body[data-page^='config-'] .config-card .table-shell {
+  margin-top: 18px;
+}
+
 .table-toolbar {
   display: grid;
   gap: 12px;
@@ -2209,6 +2349,10 @@ body.terms-locked {
   overflow: auto;
   width: 100%;
   max-width: 100%;
+}
+
+.table-toolbar-split {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .data-table {
@@ -2239,6 +2383,10 @@ body.terms-locked {
 
 .data-table tbody tr:hover {
   background: #f8fbff;
+}
+
+.data-table tbody tr:nth-child(even) {
+  background: rgba(248, 251, 255, 0.46);
 }
 
 .data-table tbody tr:last-child td {
@@ -2282,6 +2430,73 @@ body.terms-locked {
   color: var(--muted);
   line-height: 1.6;
   margin: 0;
+}
+
+.table-identity,
+.table-stacked {
+  display: grid;
+  gap: 4px;
+}
+
+.table-identity strong,
+.table-stacked strong {
+  color: #0f172a;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.table-identity small,
+.table-stacked small,
+.table-wrap {
+  color: #64748b;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.table-path strong {
+  color: #1e293b;
+  display: block;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.table-wrap {
+  max-width: 320px;
+  overflow-wrap: anywhere;
+}
+
+.table-pill {
+  align-items: center;
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  min-height: 28px;
+  padding: 0 10px;
+  text-transform: uppercase;
+}
+
+.table-pill.tone-blue {
+  background: rgba(37, 99, 235, 0.12);
+  color: #1d4ed8;
+}
+
+.table-pill.tone-green {
+  background: rgba(22, 163, 74, 0.12);
+  color: #15803d;
+}
+
+.table-pill.tone-red {
+  background: rgba(220, 38, 38, 0.12);
+  color: #b91c1c;
+}
+
+.table-pill.tone-violet {
+  background: rgba(124, 58, 237, 0.12);
+  color: #7c3aed;
 }
 
 .history-page {
@@ -2863,6 +3078,16 @@ body.terms-locked {
     position: static;
   }
 
+  body[data-page^='config-'] .config-sidebar-card {
+    border-right: 0;
+    border-radius: 24px;
+    margin: 24px 24px 0;
+  }
+
+  body[data-page^='config-'] .config-workspace {
+    padding: 24px;
+  }
+
 }
 
 @media (max-width: 860px) {
@@ -2879,6 +3104,10 @@ body.terms-locked {
   }
 
   .topbar {
+    padding: 16px;
+  }
+
+  body[data-page^='config-'] .topbar {
     padding: 16px;
   }
 
@@ -2916,6 +3145,19 @@ body.terms-locked {
 
   .config-hub-grid {
     grid-template-columns: 1fr;
+  }
+
+  body[data-page^='config-'] .config-sidebar-card {
+    margin: 16px 16px 0;
+    padding: 20px 16px;
+  }
+
+  body[data-page^='config-'] .config-workspace {
+    padding: 16px;
+  }
+
+  body[data-page^='config-'] .config-page-head {
+    padding: 22px 18px 18px;
   }
 
   .stats-grid-hero {

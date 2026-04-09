@@ -10,7 +10,14 @@
     return 'doc';
   }
 
+  function getPrimaryFileUrl(item) {
+    return item.local_file_url || item.pdf_url || '#';
+  }
+
   function buildResultDomain(item) {
+    if (item.source_kind === 'local' || item.local_relative_path) {
+      return 'arquivo local';
+    }
     try {
       return new URL(item.pdf_url).hostname.replace(/^www\./, '');
     } catch {
@@ -134,7 +141,7 @@
           </div>
           <div class="result-actions">
             <a href="/document?id=${encodeURIComponent(topItem.id)}">Abrir detalhes</a>
-            <a href="${escapeHtml(topItem.pdf_url)}" target="_blank" rel="noreferrer">Abrir PDF</a>
+            <a href="${escapeHtml(getPrimaryFileUrl(topItem))}" target="_blank" rel="noreferrer">${topItem.source_kind === 'local' || topItem.local_relative_path ? 'Abrir arquivo' : 'Abrir PDF'}</a>
           </div>
         </section>
       `
@@ -257,8 +264,8 @@
 
               <div class="result-actions">
                 <a href="${escapeHtml(detailUrl)}">Abrir detalhes</a>
-                <a href="${escapeHtml(item.pdf_url)}" target="_blank" rel="noreferrer">Abrir PDF</a>
-                <a href="${escapeHtml(item.detail_url || item.pdf_url)}" target="_blank" rel="noreferrer">Referencia</a>
+                <a href="${escapeHtml(getPrimaryFileUrl(item))}" target="_blank" rel="noreferrer">${item.source_kind === 'local' || item.local_relative_path ? 'Abrir arquivo' : 'Abrir PDF'}</a>
+                <a href="${escapeHtml(item.source_kind === 'local' ? getPrimaryFileUrl(item) : (item.detail_url || item.pdf_url))}" target="_blank" rel="noreferrer">${item.source_kind === 'local' ? 'Origem local' : 'Referencia'}</a>
               </div>
             </div>
 

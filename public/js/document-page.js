@@ -256,10 +256,14 @@
       }
     }
 
-    const pdfUrl = item.pdf_url || '#';
+    const pdfUrl = item.local_file_url || item.pdf_url || '#';
     const sourceUrl = item.detail_url || item.pdf_url || '#';
-    document.querySelector('#detailPdf').href = pdfUrl;
-    document.querySelector('#detailSource').href = sourceUrl;
+    const pdfLink = document.querySelector('#detailPdf');
+    const sourceLink = document.querySelector('#detailSource');
+    pdfLink.href = pdfUrl;
+    sourceLink.href = sourceUrl;
+    pdfLink.textContent = item.source_kind === 'local' || item.local_relative_path ? 'Visualizar arquivo' : 'Visualizar PDF';
+    sourceLink.textContent = item.source_kind === 'local' ? 'Abrir origem local' : 'Abrir referencia';
 
   }
 

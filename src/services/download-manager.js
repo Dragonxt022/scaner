@@ -5,6 +5,9 @@ const https = require('node:https');
 const path = require('node:path');
 const { pipeline } = require('node:stream/promises');
 const config = require('../config');
+const { attachLocalFileToDocumentsByPdfUrl } = require('./repository');
+const { getMimeTypeByExtension } = require('./local-library');
+const { getLocalLibraryRoot, toPosixPath } = require('../utils/local-files');
 
 const DEFAULT_CONCURRENCY = 3;
 const DEFAULT_RETRY_COUNT = 2;
@@ -24,7 +27,7 @@ function createManifest() {
     version: 1,
     updatedAt: null,
     inventoryPath: path.join(config.artifactsDir, 'pdf-links.json'),
-    destinationDir: path.join(process.cwd(), 'downloads'),
+    destinationDir: getLocalLibraryRoot(),
     items: {},
   };
 }
@@ -35,7 +38,7 @@ function createInitialState() {
     activeDownloads: new Map(),
     completedFiles: 0,
     concurrency: DEFAULT_CONCURRENCY,
-    destinationDir: path.join(process.cwd(), 'downloads'),
+    destinationDir: getLocalLibraryRoot(),
     failedFiles: 0,
     inventoryPath: path.join(config.artifactsDir, 'pdf-links.json'),
     lastUpdatedAt: null,
@@ -382,6 +385,23 @@ async function markManifestCompleted(entry, downloadState, source) {
   await persistManifest();
 }
 
+function buildLocalRelativePath(targetPath) {
+  return toPosixPath(path.relative(getLocalLibraryRoot(), targetPath));
+}
+
+async function registerDownloadedLocalMirror(entry, downloadState) {
+  const localRelativePath = buildLocalRelativePath(downloadState.targetPath);
+  if (!localRelativePath || localRelativePath.startsWith('..')) {
+    return;
+  }
+
+  attachLocalFileToDocumentsByPdfUrl(
+    entry.url,
+    localRelativePath,
+    getMimeTypeByExtension(downloadState.targetPath || entry.fileName || ''),
+  );
+}
+
 async function markManifestFailed(entry, downloadState, error) {
   state.manifest.items[entry.url] = {
     failedAt: new Date().toISOString(),
@@ -442,6 +462,7 @@ async function downloadSingleEntry(entry, slot) {
       if (existingAction.action === 'complete-existing') {
         downloadState.status = 'done';
         await markManifestCompleted(entry, downloadState, 'existing');
+        await registerDownloadedLocalMirror(entry, downloadState);
         state.completedFiles += 1;
         state.pendingFiles = Math.max(0, state.pendingFiles - 1);
         markUpdated();
@@ -466,6 +487,7 @@ async function downloadSingleEntry(entry, slot) {
       await fsp.rename(tempPath, entry.targetPath);
       downloadState.status = 'done';
       await markManifestCompleted(entry, downloadState, 'download');
+      await registerDownloadedLocalMirror(entry, downloadState);
       state.completedFiles += 1;
       state.pendingFiles = Math.max(0, state.pendingFiles - 1);
       markUpdated();
@@ -549,7 +571,7 @@ async function startBackgroundDownloads(options = {}) {
   const concurrency = Math.max(1, Number(options.concurrency) || DEFAULT_CONCURRENCY);
   const retryCount = Math.max(0, Number(options.retryCount) || DEFAULT_RETRY_COUNT);
   const timeoutMs = Math.max(5000, Number(options.timeoutMs) || DEFAULT_TIMEOUT_MS);
-  const destinationDir = path.resolve(process.cwd(), options.destinationDir || state.manifest.destinationDir || 'downloads');
+  const destinationDir = getLocalLibraryRoot();
   const overwrite = Boolean(options.overwrite);
   const queueData = await buildQueue(entries, destinationDir);
 

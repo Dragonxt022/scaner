@@ -36,6 +36,14 @@ function getPreviewWidthForQuality(quality) {
   return 420;
 }
 
+function supportsPreviewImage(document) {
+  const mimeType = String(document?.mime_type || '').toLowerCase();
+  if (mimeType) {
+    return mimeType === 'application/pdf';
+  }
+  return /\.pdf(?:$|\?)/i.test(String(document?.pdf_url || ''));
+}
+
 function removeExistingPreviewFiles(documentId) {
   const root = ensureMediaDirectories();
   for (const entry of fs.readdirSync(root)) {
@@ -483,7 +491,7 @@ async function generatePreviewImage(document, settings, options = {}) {
     return null;
   }
 
-  if (!settings.enrichmentPreviewImagesEnabled || !document.pdf_url) {
+  if (!settings.enrichmentPreviewImagesEnabled || !document.pdf_url || !supportsPreviewImage(document)) {
     return null;
   }
 

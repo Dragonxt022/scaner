@@ -6,6 +6,7 @@
   "scripts": {
     "prestart": "npm run styles:build",
     "start": "node src/server.js",
+    "dev": "nodemon --watch src --watch public --ext js,ejs,css,json --exec \"npm run ui\"",
     "test": "node --test",
     "preui": "npm run styles:build",
     "ui": "node src/server.js",
@@ -38,6 +39,7 @@
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.2.2",
+    "nodemon": "^3.1.14",
     "tailwindcss": "^4.2.2"
   }
 }

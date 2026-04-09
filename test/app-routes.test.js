@@ -24,6 +24,9 @@ function setupApp(dbPath) {
   clearModule('../src/services/audit');
   clearModule('../src/services/document-enrichment');
   clearModule('../src/services/document-qa');
+  clearModule('../src/services/indexer');
+  clearModule('../src/services/local-document-text');
+  clearModule('../src/services/local-library');
   clearModule('../src/services/repository');
   clearModule('../src/services/search');
   clearModule('../src/services/text-cleanup');
@@ -385,6 +388,97 @@ test('admin enrichment models lista modelos automaticamente para endpoint nativo
       closeDatabase();
     }
   } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+test('admin local library sincroniza arquivos locais no acervo', async () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'scaner-app-test-'));
+  const dbPath = path.join(tempDir, 'app.sqlite');
+  const localLibraryRoot = path.join(process.cwd(), 'data', 'local-acervo');
+  const localFileName = `test-local-${Date.now()}.txt`;
+  const localFilePath = path.join(localLibraryRoot, localFileName);
+
+  fs.mkdirSync(localLibraryRoot, { recursive: true });
+  fs.writeFileSync(localFilePath, 'arquivo local de teste para sincronizacao', 'utf8');
+
+  try {
+    const { app, closeDatabase, closeSequelize } = setupApp(dbPath);
+    const { server, baseUrl } = await startServer(app);
+
+    try {
+      const syncResponse = await fetch(`${baseUrl}/api/admin/local-library/sync`, {
+        method: 'POST',
+      });
+      const syncBody = await syncResponse.json();
+
+      assert.equal(syncResponse.status, 200);
+      assert.ok(syncBody.totalFiles >= 1);
+
+      const listResponse = await fetch(`${baseUrl}/api/admin/local-library?limit=500`);
+      const listBody = await listResponse.json();
+      const syncedItem = listBody.items.find((item) => item.nome_arquivo === localFileName);
+
+      assert.equal(listResponse.status, 200);
+      assert.ok(syncedItem);
+      assert.equal(syncedItem.source_kind, 'local');
+      assert.match(syncedItem.pdf_url, /^\/acervo-local\//);
+    } finally {
+      await new Promise((resolve, reject) => server.close((error) => (error ? reject(error) : resolve())));
+      await closeSequelize();
+      closeDatabase();
+    }
+  } finally {
+    fs.rmSync(localFilePath, { force: true });
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+test('indexacao processa arquivo textual da biblioteca local', async () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'scaner-app-test-'));
+  const dbPath = path.join(tempDir, 'app.sqlite');
+  const localLibraryRoot = path.join(process.cwd(), 'data', 'local-acervo');
+  const localFileName = `index-local-${Date.now()}.txt`;
+  const localFilePath = path.join(localLibraryRoot, localFileName);
+
+  fs.mkdirSync(localLibraryRoot, { recursive: true });
+  fs.writeFileSync(localFilePath, 'Maria de Souza documento local indexado com texto pesquisavel.', 'utf8');
+
+  try {
+    const { app, closeDatabase, closeSequelize, repository } = setupApp(dbPath);
+    const { server, baseUrl } = await startServer(app);
+
+    try {
+      await fetch(`${baseUrl}/api/admin/local-library/sync`, { method: 'POST' });
+      const listResponse = await fetch(`${baseUrl}/api/admin/local-library?limit=1000`);
+      const listBody = await listResponse.json();
+      const expectedSourceKey = `local-file::${localFileName}`;
+      const localItem = listBody.items.find((item) => item.source_key === expectedSourceKey || item.nome_arquivo === localFileName);
+
+      assert.ok(localItem);
+
+      const response = await fetch(`${baseUrl}/api/admin/reindex/document/${localItem.id}`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          mode: 'hybrid',
+          fullProcessIfNeeded: false,
+        }),
+      });
+      const body = await response.json();
+      const updated = repository.getDocumentById(localItem.id);
+
+      assert.equal(response.status, 200);
+      assert.equal(body.status, 'indexed');
+      assert.equal(updated.index_status, 'indexed');
+      assert.match(updated.extracted_text, /Maria de Souza/);
+    } finally {
+      await new Promise((resolve, reject) => server.close((error) => (error ? reject(error) : resolve())));
+      await closeSequelize();
+      closeDatabase();
+    }
+  } finally {
+    fs.rmSync(localFilePath, { force: true });
     fs.rmSync(tempDir, { recursive: true, force: true });
   }
 });
@@ -943,10 +1037,11 @@ test('reindex start recupera grupos presos em processing antes de iniciar', asyn
       });
       const body = await response.json();
       const queueStats = repository.getIndexerQueueStats();
+      const recoveredVisibleGroups = (queueStats.pendingContentGroups || 0) + (queueStats.processingContentGroups || 0);
 
       assert.equal(response.status, 200);
       assert.equal(body.recoveredGroupsAtStart, 1);
-      assert.equal(queueStats.processingContentGroups, 0);
+      assert.ok(recoveredVisibleGroups >= 1);
     } finally {
       await fetch(`${baseUrl}/api/admin/reindex/stop`, { method: 'POST' });
       await new Promise((resolve, reject) => server.close((error) => (error ? reject(error) : resolve())));

@@ -24,7 +24,10 @@ function migrateDatabase(database) {
   };
 
   if (hasDocumentsTable) {
+    addColumnIfMissing('documents', 'source_kind', "source_kind TEXT NOT NULL DEFAULT 'remote'");
     addColumnIfMissing('documents', 'content_key', 'content_key TEXT');
+    addColumnIfMissing('documents', 'local_relative_path', 'local_relative_path TEXT');
+    addColumnIfMissing('documents', 'mime_type', 'mime_type TEXT');
     addColumnIfMissing('documents', 'index_attempts', 'index_attempts INTEGER NOT NULL DEFAULT 0');
     addColumnIfMissing('documents', 'last_index_method', 'last_index_method TEXT');
     addColumnIfMissing('documents', 'last_error_at', 'last_error_at TEXT');
