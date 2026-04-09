@@ -6,6 +6,7 @@ const { runMigrations } = require('./db/migrations');
 const { authenticateDatabase } = require('./db/sequelize');
 const { syncCatalogFromArtifacts } = require('./services/catalog-sync');
 const { ensureDefaultAdminUser } = require('./services/auth');
+const { startLocalLibraryWatcher } = require('./services/local-library-watcher');
 
 function resolveLocalNetworkAddresses() {
   const interfaces = os.networkInterfaces();
@@ -47,6 +48,12 @@ async function bootstrap() {
       }
     } else {
       console.log(`Interface vinculada ao host ${config.host}:${config.port}`);
+    }
+    // iniciar observador de acervo local (sincronizacao automatica quando habilitada)
+    try {
+      startLocalLibraryWatcher();
+    } catch (err) {
+      console.warn('Nao foi possivel iniciar o observador do acervo local:', err.message || err);
     }
   });
 }

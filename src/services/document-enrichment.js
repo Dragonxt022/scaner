@@ -6,6 +6,7 @@ const { defineModels } = require('../db/models');
 const config = require('../config');
 const { getAppSettings } = require('./app-settings');
 const { resolveAiEndpoint, resolveModelEndpoints } = require('./ai-endpoint');
+const { getLocalLibraryRoot, buildLocalLibraryUrl } = require('../utils/local-files');
 const { analyzeTextQuality, cleanupExtractedText, formatIndexedText, sanitizeSnippet } = require('../utils/text');
 const {
   getDocumentById,
@@ -155,6 +156,13 @@ function extractSummaryText(payload) {
 }
 
 async function fetchPdfBuffer(url) {
+  const str = String(url || '');
+  if (str.startsWith('/acervo-local/')) {
+    const relative = decodeURIComponent(str.replace(/^\/acervo-local\//, ''));
+    const absolute = path.join(getLocalLibraryRoot(), relative);
+    return fs.readFileSync(absolute);
+  }
+
   const response = await fetch(url, {
     dispatcher: config.allowInsecureTls ? insecureDispatcher : undefined,
   });
@@ -669,6 +677,19 @@ async function saveDocumentPreviewImage(documentId, image) {
 function listDocumentPreviewImages(document) {
   const primaryPath = String(document?.preview_image_path || '').trim();
   if (!primaryPath) {
+    // If no preview images were generated but the document references
+    // a local file that is itself an image, expose it as a single preview
+    // so the UI can show a thumbnail for local images in `data/local-acervo`.
+    const localRel = String(document?.local_relative_path || '').trim();
+    const mime = String(document?.mime_type || '').toLowerCase();
+    if (localRel && mime.startsWith('image/')) {
+      return [{
+        isPrimary: true,
+        label: 'Arquivo',
+        relativePath: localRel,
+        url: buildLocalLibraryUrl(localRel),
+      }];
+    }
     return [];
   }
 

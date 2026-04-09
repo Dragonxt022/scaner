@@ -66,6 +66,7 @@ async function getAppSettings() {
     enrichmentPreviewImagesEnabled: normalizeBoolean(values.enrichmentPreviewImagesEnabled, false),
     enrichmentProvider: values.enrichmentProvider || 'disabled',
     enrichmentSummaryEnabled: normalizeBoolean(values.enrichmentSummaryEnabled, true),
+      localLibraryAutoSync: normalizeBoolean(values.localLibraryAutoSync, false),
   };
 }
 
@@ -115,6 +116,9 @@ async function updateAppSettings(patch = {}) {
     enrichmentSummaryEnabled: Object.prototype.hasOwnProperty.call(patch, 'enrichmentSummaryEnabled')
       ? normalizeBoolean(patch.enrichmentSummaryEnabled, current.enrichmentSummaryEnabled)
       : current.enrichmentSummaryEnabled,
+    localLibraryAutoSync: Object.prototype.hasOwnProperty.call(patch, 'localLibraryAutoSync')
+      ? normalizeBoolean(patch.localLibraryAutoSync, current.localLibraryAutoSync)
+      : current.localLibraryAutoSync,
   };
 
   const { AppSetting } = defineModels();
@@ -132,6 +136,7 @@ async function updateAppSettings(patch = {}) {
     ['enrichmentPreviewImagesEnabled', next.enrichmentPreviewImagesEnabled ? 'true' : 'false'],
     ['enrichmentProvider', next.enrichmentProvider],
     ['enrichmentSummaryEnabled', next.enrichmentSummaryEnabled ? 'true' : 'false'],
+    ['localLibraryAutoSync', next.localLibraryAutoSync ? 'true' : 'false'],
   ];
 
   for (const [key, value] of entries) {
