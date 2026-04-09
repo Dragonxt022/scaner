@@ -1,0 +1,34 @@
+<%- include('partials/head', { pageTitle, currentUser, canAccessAdmin }) %>
+<div class="shell">
+  <%- include('partials/brand-header', { href: '/', currentUser, canAccessAdmin }) %>
+  <main class="login-shell">
+    <section class="login-layout">
+      <article class="login-card security-card">
+        <p class="hero-kicker">Seguranca obrigatoria</p>
+        <h1>Troca de senha exigida</h1>
+        <p class="detail-hero-copy">Sua senha atual esta marcada como inicial ou redefinida. Antes de continuar, crie uma nova senha forte.</p>
+
+        <form id="securityForm" class="login-form">
+          <label>
+            <span>Senha atual</span>
+            <input id="securityCurrentPassword" type="password" autocomplete="current-password" />
+          </label>
+          <label>
+            <span>Nova senha</span>
+            <input id="securityNewPassword" type="password" autocomplete="new-password" />
+          </label>
+          <label>
+            <span>Confirmar nova senha</span>
+            <input id="securityConfirmPassword" type="password" autocomplete="new-password" />
+          </label>
+          <button class="primary-button login-submit" type="submit">Atualizar senha</button>
+        </form>
+
+        <p class="config-note">Regra: minimo 6 caracteres com 1 letra maiuscula, 1 numero e 1 caractere especial.</p>
+        <p id="securityFeedback" class="detail-inline-feedback"></p>
+      </article>
+    </section>
+  </main>
+</div>
+<script src="/js/security-page.js"></script>
+<%- include('partials/footer-scripts') %>

@@ -1,0 +1,79 @@
+<article class="config-card">
+  <div class="section-head">
+    <div>
+      <p class="panel-kicker">Downloads</p>
+      <h3>Fila persistente</h3>
+    </div>
+    <span class="badge" id="downloadStatusMode">Parado</span>
+  </div>
+
+  <div class="form-grid">
+    <label>
+      <span>Destino</span>
+      <input id="downloadDestinationDir" type="text" value="downloads" />
+    </label>
+    <label>
+      <span>Simultaneos</span>
+      <select id="downloadConcurrency">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3" selected>3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="8">8</option>
+      </select>
+    </label>
+    <label>
+      <span>Tentativas</span>
+      <select id="downloadRetryCount">
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2" selected>2</option>
+        <option value="3">3</option>
+      </select>
+    </label>
+    <label>
+      <span>Timeout</span>
+      <select id="downloadTimeoutMs">
+        <option value="15000">15s</option>
+        <option value="30000" selected>30s</option>
+        <option value="45000">45s</option>
+        <option value="60000">60s</option>
+      </select>
+    </label>
+  </div>
+
+  <label class="toggle-line strong-line">
+    <input id="downloadOverwrite" type="checkbox" />
+    <span>Sobrescrever existente</span>
+  </label>
+
+  <div class="button-row">
+    <button id="downloadStart" class="primary-button" type="button">Iniciar</button>
+    <button id="downloadStop" class="ghost-button danger-button" type="button">Parar</button>
+  </div>
+
+  <div class="progress-block">
+    <div class="progress-track">
+      <div id="downloadTotalProgressBar" class="progress-fill" style="width: 0%"></div>
+    </div>
+    <div class="progress-copy">
+      <span id="downloadTotalProgressLabel">0%</span>
+      <span id="downloadMessage">Aguardando inicio.</span>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <article class="overview-stat"><span>Total</span><strong id="downloadTotalFiles">0</strong></article>
+    <article class="overview-stat"><span>Concluidos</span><strong id="downloadCompletedFiles">0</strong></article>
+    <article class="overview-stat"><span>Falhados</span><strong id="downloadFailedFiles">0</strong></article>
+    <article class="overview-stat"><span>Pendentes</span><strong id="downloadPendingFiles">0</strong></article>
+  </div>
+
+  <p id="downloadActionFeedback" class="config-note">Sem acao recente.</p>
+  <p id="downloadProgressText" class="config-note">0 / 0</p>
+  <p id="downloadInFlightCount" class="config-note">0 em andamento</p>
+  <p id="downloadManifestPath" class="config-note">--</p>
+  <p id="downloadUpdatedAt" class="config-note">--</p>
+  <div id="downloadActiveList" class="stack-list"></div>
+</article>

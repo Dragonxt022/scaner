@@ -1,0 +1,19 @@
+<header class="topbar">
+  <a class="brand" href="<%= typeof href !== 'undefined' ? href : '/' %>"<% if (typeof brandId !== 'undefined' && brandId) { %> id="<%= brandId %>"<% } %>>
+    <span class="brand-mark">SI</span>
+    <span class="brand-copy">
+      <strong>Acervo</strong>
+      <small>Publico</small>
+    </span>
+  </a>
+  <% if (currentUser) { %>
+    <div class="topbar-actions">
+      <span class="badge secondary-badge"><%= currentUser.full_name %> • <%= currentUser.role === 'admin' ? 'admin' : 'usuario' %></span>
+      <a class="ghost-button" href="/history">Meu historico</a>
+      <% if (canAccessAdmin) { %>
+        <a class="ghost-button" href="/config">Painel</a>
+      <% } %>
+      <button id="logoutButton" class="ghost-button" type="button">Sair</button>
+    </div>
+  <% } %>
+</header>

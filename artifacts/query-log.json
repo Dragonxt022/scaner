@@ -1,0 +1,677 @@
+[
+  {
+    "classificacao": "ADIMINISTRAÇÃO GERAL",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 37,
+    "extracted": 37,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "ADMINISTRAÇÃO GERAL",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 2131,
+    "extracted": 2131,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "BALANCETE",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 387,
+    "extracted": 387,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "CAIXA DIVERSO 5",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 3,
+    "extracted": 3,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "CONTROLADORIA INTERNA",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 3,
+    "extracted": 3,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "CONVOCAÇÃO (EDITAL CONVOCAÇÃO FUNCIONAL)",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 12,
+    "extracted": 12,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "CÓPIAS DE CHEQUE",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 1,
+    "extracted": 1,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "DECRETO",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 36,
+    "extracted": 36,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "EQUILIBRIO ECONOMICO FINANCEIRO VOL 1",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 0,
+    "extracted": 0,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "EXTRATO BANCÁRIO",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 16,
+    "extracted": 16,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "FOLHA DE PAGAMENTO",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 1356,
+    "extracted": 1356,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "INDICAÇÃO EM GERAL",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 5,
+    "extracted": 5,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "LEGISLAÇÃO",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 1755,
+    "extracted": 1755,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "LICITAÇÃO",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 3205,
+    "extracted": 3205,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "OFÍCIO EXPEDIDO",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 6,
+    "extracted": 6,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "OFICIOS , CORRESPONDÊNCIAS RECEBIDAS",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 155,
+    "extracted": 155,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "OFICIOS EXPEDIDOS",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 171,
+    "extracted": 171,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "ORÇAMENTOS , FINANÇAS E CONTABILIDADE",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 59,
+    "extracted": 59,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "ORDEM DE PAGAMENTO",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 2305,
+    "extracted": 2305,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "PATRIMÔNIO",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 18,
+    "extracted": 18,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "PORTARIA",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 54,
+    "extracted": 54,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "PRESTAÇÃO DE CONTAS",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 143,
+    "extracted": 143,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "PROCESSO DE CONCESSÃO DE USO DE IMOVEL",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 1,
+    "extracted": 1,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "PROCESSOS JUDICIAIS",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 104,
+    "extracted": 104,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "PROJETO DE LEI COMPLEMENTAR",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 3,
+    "extracted": 3,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "REGISTRO DE ATIVIDADE PARLAMENTAR",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 12,
+    "extracted": 12,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "REGISTRO EXPEDIENTE DO PLENÁRIO",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 2,
+    "extracted": 2,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "REQUERIMENTO EM GERAL",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 1,
+    "extracted": 1,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "REQUERIMENTOS EM GERAL- PEDIDO DE INFORMAÇÃO",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 27,
+    "extracted": 27,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "RH",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 1737,
+    "extracted": 1737,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "TRIBUNAL DE CONTAS",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 15,
+    "extracted": 15,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "TRIBUTOS (IMPOSTOS E TAXAS)",
+    "caixa": "",
+    "ano": "",
+    "descricao": "",
+    "total": 322,
+    "extracted": 322,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "2025",
+    "descricao": "",
+    "total": 9,
+    "extracted": 9,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "2024",
+    "descricao": "",
+    "total": 185,
+    "extracted": 185,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "2023",
+    "descricao": "",
+    "total": 359,
+    "extracted": 359,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "2022",
+    "descricao": "",
+    "total": 444,
+    "extracted": 444,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "2021",
+    "descricao": "",
+    "total": 981,
+    "extracted": 981,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "2020",
+    "descricao": "",
+    "total": 1112,
+    "extracted": 1112,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "2019",
+    "descricao": "",
+    "total": 1218,
+    "extracted": 1218,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "2018",
+    "descricao": "",
+    "total": 1064,
+    "extracted": 1064,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "2017",
+    "descricao": "",
+    "total": 1116,
+    "extracted": 1116,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "2016",
+    "descricao": "",
+    "total": 1140,
+    "extracted": 1140,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "2015",
+    "descricao": "",
+    "total": 1322,
+    "extracted": 1322,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "2014",
+    "descricao": "",
+    "total": 967,
+    "extracted": 967,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "2013",
+    "descricao": "",
+    "total": 666,
+    "extracted": 666,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "2012",
+    "descricao": "",
+    "total": 748,
+    "extracted": 748,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "2011",
+    "descricao": "",
+    "total": 434,
+    "extracted": 434,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "2010",
+    "descricao": "",
+    "total": 252,
+    "extracted": 252,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "2009",
+    "descricao": "",
+    "total": 555,
+    "extracted": 555,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "2008",
+    "descricao": "",
+    "total": 188,
+    "extracted": 188,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "2007",
+    "descricao": "",
+    "total": 212,
+    "extracted": 212,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "2006",
+    "descricao": "",
+    "total": 215,
+    "extracted": 215,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "2005",
+    "descricao": "",
+    "total": 95,
+    "extracted": 95,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "2004",
+    "descricao": "",
+    "total": 141,
+    "extracted": 141,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "2003",
+    "descricao": "",
+    "total": 85,
+    "extracted": 85,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "2002",
+    "descricao": "",
+    "total": 63,
+    "extracted": 63,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "2001",
+    "descricao": "",
+    "total": 60,
+    "extracted": 60,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "2000",
+    "descricao": "",
+    "total": 41,
+    "extracted": 41,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "1999",
+    "descricao": "",
+    "total": 150,
+    "extracted": 150,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "1998",
+    "descricao": "",
+    "total": 43,
+    "extracted": 43,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "1997",
+    "descricao": "",
+    "total": 191,
+    "extracted": 191,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "1996",
+    "descricao": "",
+    "total": 9,
+    "extracted": 9,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "1995",
+    "descricao": "",
+    "total": 4,
+    "extracted": 4,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "1994",
+    "descricao": "",
+    "total": 2,
+    "extracted": 2,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "1993",
+    "descricao": "",
+    "total": 1,
+    "extracted": 1,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "1992",
+    "descricao": "",
+    "total": 3,
+    "extracted": 3,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "1991",
+    "descricao": "",
+    "total": 1,
+    "extracted": 1,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "1990",
+    "descricao": "",
+    "total": 1,
+    "extracted": 1,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "1989",
+    "descricao": "",
+    "total": 1,
+    "extracted": 1,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "1979",
+    "descricao": "",
+    "total": 1,
+    "extracted": 1,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "1977",
+    "descricao": "",
+    "total": 1,
+    "extracted": 1,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "1907",
+    "descricao": "",
+    "total": 2,
+    "extracted": 2,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "215",
+    "descricao": "",
+    "total": 1,
+    "extracted": 1,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "16",
+    "descricao": "",
+    "total": 1,
+    "extracted": 1,
+    "splitByYear": false
+  },
+  {
+    "classificacao": "",
+    "caixa": "",
+    "ano": "9",
+    "descricao": "",
+    "total": 1,
+    "extracted": 1,
+    "splitByYear": false
+  }
+]

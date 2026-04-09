@@ -1,0 +1,64 @@
+<%- include('partials/head', { pageTitle, bodyClass: 'login-page' }) %>
+<div class="shell login-shell">
+  <main class="login-layout login-layout-wide">
+    <section class="login-card">
+      <p class="hero-kicker">Acesso seguro</p>
+      <h1>Entrar no Acervo</h1>
+      <p class="detail-hero-copy">Usuarios autenticados acessam a pesquisa. Administradores acessam tambem o painel de configuracoes.</p>
+
+      <form id="loginForm" class="login-form">
+        <label>
+          <span>CPF</span>
+          <input id="loginCpf" type="text" inputmode="numeric" maxlength="14" placeholder="Somente numeros do CPF" autocomplete="username" />
+        </label>
+        <label>
+          <span>Senha</span>
+          <input id="loginPassword" type="password" placeholder="Sua senha" autocomplete="current-password" />
+        </label>
+        <button class="primary-button login-submit" type="submit">Entrar</button>
+      </form>
+
+      <p class="config-note">Regra de senha: minimo 6 caracteres com 1 letra maiuscula, 1 numero e 1 caractere especial.</p>
+      <p id="loginFeedback" class="detail-inline-feedback"></p>
+    </section>
+
+    <section class="login-card">
+      <p class="hero-kicker">Recuperacao</p>
+      <h2 class="login-card-subtitle">Esqueci minha senha</h2>
+      <p class="detail-hero-copy">Solicite a recuperacao pelo CPF. Um administrador emitira um codigo temporario. Depois, use o codigo para definir a nova senha.</p>
+
+      <form id="passwordResetRequestForm" class="login-form">
+        <label>
+          <span>CPF para solicitacao</span>
+          <input id="resetRequestCpf" type="text" inputmode="numeric" maxlength="14" placeholder="CPF do usuario" />
+        </label>
+        <button class="ghost-button login-submit secondary-submit" type="submit">Solicitar recuperacao</button>
+      </form>
+
+      <form id="passwordResetApplyForm" class="login-form recovery-form">
+        <label>
+          <span>CPF</span>
+          <input id="resetApplyCpf" type="text" inputmode="numeric" maxlength="14" placeholder="CPF do usuario" />
+        </label>
+        <label>
+          <span>Codigo temporario</span>
+          <input id="resetApplyCode" type="text" maxlength="20" placeholder="Codigo informado pelo admin" />
+        </label>
+        <label>
+          <span>Nova senha</span>
+          <input id="resetApplyPassword" type="password" autocomplete="new-password" />
+        </label>
+        <button class="primary-button login-submit" type="submit">Redefinir senha</button>
+      </form>
+
+      <p id="passwordResetFeedback" class="detail-inline-feedback"></p>
+    </section>
+  </main>
+</div>
+<script>
+  window.__LOGIN_CONTEXT__ = {
+    next: <%- JSON.stringify(typeof next !== 'undefined' ? next : '') %>
+  };
+</script>
+<script src="/js/login-page.js"></script>
+<%- include('partials/footer-scripts') %>

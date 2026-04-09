@@ -1,0 +1,48 @@
+<aside class="config-sidebar">
+  <div class="config-sidebar-card">
+    <div class="config-sidebar-profile">
+      <div class="config-sidebar-brand">
+        <span class="config-sidebar-brand-mark">AP</span>
+        <div>
+          <p class="panel-kicker">Painel administrativo</p>
+          <h3>Central de comando</h3>
+        </div>
+      </div>
+      <% if (currentUser) { %>
+        <p class="config-note">Perfil <strong><%= currentUser.role === 'admin' ? 'admin' : 'usuario' %></strong> • CPF <strong><%= currentUser.cpf %></strong></p>
+        <p class="config-sidebar-user"><%= currentUser.full_name %></p>
+      <% } %>
+    </div>
+
+    <div class="config-nav-group">
+      <p class="config-nav-title">Visao geral</p>
+      <nav class="config-nav">
+        <a class="config-nav-button <%= activeSection === 'dashboard' ? 'active' : '' %>" href="/config">Dashboard</a>
+      </nav>
+    </div>
+
+    <div class="config-nav-group">
+      <p class="config-nav-title">Seguranca e pessoas</p>
+      <nav class="config-nav">
+        <a class="config-nav-button <%= activeSection === 'users' ? 'active' : '' %>" href="/config/users">Usuarios</a>
+        <a class="config-nav-button <%= activeSection === 'audit' ? 'active' : '' %>" href="/config/audit">Rastreabilidade</a>
+        <a class="config-nav-button <%= activeSection === 'settings' ? 'active' : '' %>" href="/config/settings">Preferencias</a>
+      </nav>
+    </div>
+
+    <div class="config-nav-group">
+      <p class="config-nav-title">Operacao</p>
+      <nav class="config-nav">
+        <a class="config-nav-button <%= activeSection === 'indexing' ? 'active' : '' %>" href="/config/indexing">Indexacao</a>
+        <a class="config-nav-button <%= activeSection === 'downloads' ? 'active' : '' %>" href="/config/downloads">Downloads</a>
+        <a class="config-nav-button <%= activeSection === 'logs' ? 'active' : '' %>" href="/config/logs">Logs e erros</a>
+        <a class="config-nav-button <%= activeSection === 'maintenance' ? 'active' : '' %>" href="/config/maintenance">Tratamento</a>
+        <a class="config-nav-button <%= activeSection === 'enrichment' ? 'active' : '' %>" href="/config/enrichment">IA e midia</a>
+      </nav>
+    </div>
+
+    <div class="config-actions">
+      <a class="detail-action-secondary config-sidebar-cta" href="/">Ir para busca</a>
+    </div>
+  </div>
+</aside>

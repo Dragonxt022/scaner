@@ -1,0 +1,43 @@
+<article class="config-card">
+  <div class="section-head">
+    <div>
+      <p class="panel-kicker">Logs</p>
+      <h3>Historico e falhas</h3>
+    </div>
+    <span class="badge secondary-badge" id="failureCount">0</span>
+  </div>
+  <div class="config-section-grid compact-grid">
+    <div>
+      <h4 class="config-subtitle">Falhas recentes</h4>
+      <div class="table-toolbar">
+        <label>
+          <span>Filtrar falhas</span>
+          <input id="indexFailureSearch" type="text" placeholder="Documento, caixa, classificacao ou erro" />
+        </label>
+      </div>
+      <div id="indexFailuresList" class="table-shell"></div>
+    </div>
+    <div>
+      <h4 class="config-subtitle">Lotes recentes</h4>
+      <div class="table-toolbar">
+        <label>
+          <span>Filtrar lotes</span>
+          <input id="indexerBatchSearch" type="text" placeholder="Lote, modo ou data" />
+        </label>
+      </div>
+      <div id="indexerBatchHistory" class="table-shell"></div>
+    </div>
+  </div>
+  <div class="config-section-grid compact-grid">
+    <div>
+      <h4 class="config-subtitle">Log operacional</h4>
+      <div class="table-toolbar">
+        <label>
+          <span>Filtrar log</span>
+          <input id="indexerOperationSearch" type="text" placeholder="Nivel, mensagem, lote, documento" />
+        </label>
+      </div>
+      <div id="indexerOperationLogs" class="table-shell"></div>
+    </div>
+  </div>
+</article>

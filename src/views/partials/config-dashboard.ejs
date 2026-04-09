@@ -1,0 +1,62 @@
+<article class="config-card">
+  <div class="section-head">
+    <div>
+      <p class="panel-kicker">Indicadores principais</p>
+      <h3>Pulso do ambiente</h3>
+    </div>
+    <div class="config-actions">
+      <button id="refreshStats" type="button">Atualizar estatisticas</button>
+      <button id="syncCatalog" type="button">Sincronizar catalogo</button>
+    </div>
+  </div>
+  <div id="configStats" class="stats-grid stats-grid-hero"></div>
+  <p class="config-note" id="configFeedback">Aguardando acao.</p>
+  <p class="config-note" id="databaseStrategy">Carregando estrategia de banco.</p>
+</article>
+
+<article class="config-card">
+  <div class="section-head">
+    <div>
+      <p class="panel-kicker">Centros de trabalho</p>
+      <h3>Entradas rapidas do painel</h3>
+    </div>
+  </div>
+  <div class="table-shell">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Area</th>
+          <th>Funcao</th>
+          <th>Uso principal</th>
+          <th class="table-col-actions">Acesso</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Seguranca</td>
+          <td>Usuarios e senhas</td>
+          <td>Cadastro, perfil, status, troca obrigatoria e recuperacao.</td>
+          <td><a class="ghost-button table-inline-button" href="/config/users">Abrir</a></td>
+        </tr>
+        <tr>
+          <td>Auditoria</td>
+          <td>Rastreabilidade</td>
+          <td>Acessos, pesquisas, horario, IP e trilha de uso.</td>
+          <td><a class="ghost-button table-inline-button" href="/config/audit">Abrir</a></td>
+        </tr>
+        <tr>
+          <td>Operacao</td>
+          <td>Fila de indexacao</td>
+          <td>Andamento, gargalos, fila detalhada e reprocessamento.</td>
+          <td><a class="ghost-button table-inline-button" href="/config/indexing">Abrir</a></td>
+        </tr>
+        <tr>
+          <td>Suporte</td>
+          <td>Logs tecnicos</td>
+          <td>Falhas, lotes, eventos operacionais e diagnostico.</td>
+          <td><a class="ghost-button table-inline-button" href="/config/logs">Abrir</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</article>

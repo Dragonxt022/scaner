@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@source "../views/**/*.ejs";
+@source "../../public/js/**/*.js";
+
+@theme {
+  --font-sans: Arial, Helvetica, sans-serif;
+  --color-acervo-bg: #ffffff;
+  --color-acervo-surface: #ffffff;
+  --color-acervo-surface-soft: #f8f9fa;
+  --color-acervo-line: #dadce0;
+  --color-acervo-text: #202124;
+  --color-acervo-muted: #5f6368;
+  --color-acervo-link: #1a0dab;
+  --color-acervo-green: #188038;
+  --color-acervo-blue: #1a73e8;
+  --color-acervo-danger: #d93025;
+}
+
+@import "./legacy.css";

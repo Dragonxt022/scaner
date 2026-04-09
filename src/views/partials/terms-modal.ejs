@@ -1,0 +1,31 @@
+<% const showTermsModal = Boolean(currentUser && !currentUser.terms_accepted_at); %>
+<section id="termsModal" class="terms-modal<%= showTermsModal ? '' : ' hidden' %>" aria-hidden="<%= showTermsModal ? 'false' : 'true' %>">
+  <div class="terms-modal-backdrop"></div>
+  <div class="terms-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="termsModalTitle">
+    <div class="terms-modal-head">
+      <p class="panel-kicker">Termo obrigatorio</p>
+      <h2 id="termsModalTitle">Responsabilidade e uso restrito das informacoes</h2>
+      <p class="terms-modal-lead">A liberacao do sistema depende do aceite deste termo. Todas as acoes permanecem auditadas.</p>
+    </div>
+    <div class="terms-modal-body">
+      <p>Este sistema disponibiliza documentos e informacoes potencialmente sensiveis, pessoais, funcionais, administrativas e historicas. O acesso e concedido unicamente para finalidades legitimas, rastreaveis e compatíveis com o interesse publico, com a legislacao aplicavel e com os deveres funcionais do usuario autenticado.</p>
+      <p><strong>Base legal considerada neste aviso:</strong> Lei no 13.709/2018 (Lei Geral de Protecao de Dados Pessoais - LGPD), especialmente os principios de finalidade, adequacao, necessidade, seguranca e responsabilizacao; Lei no 12.527/2011 (Lei de Acesso a Informacao - LAI), em especial o tratamento de informacoes pessoais; Lei no 8.159/1991, sobre a politica nacional de arquivos publicos e privados; e Lei no 12.965/2014 (Marco Civil da Internet), quanto ao ambiente de acesso e registros tecnicos.</p>
+      <p><strong>Sigilo e compartilhamento:</strong> documentos que contenham dados pessoais, dados sensiveis, dados funcionais, documentos administrativos individualizados ou qualquer elemento que permita identificar pessoa natural nao podem ser compartilhados livremente, copiados, retransmitidos, impressos ou enviados a terceiros sem fundamento juridico e autorizacao institucional adequada.</p>
+      <p><strong>Regra operacional expressa deste ambiente:</strong> quando houver necessidade de fornecimento formal de documentos, o atendimento deve ocorrer apenas mediante procedimento oficial dirigido ao proprio titular interessado ou a representante legalmente habilitado, conforme validacao administrativa competente. Nao sao aceitos, para este fluxo interno, pedidos genericos em nome de terceiros sem verificacao formal de legitimidade, representacao e finalidade.</p>
+      <p><strong>Uso individual e intransferivel:</strong> seu login e pessoal e intransferivel. E vedado compartilhar credenciais, permitir acesso por outra pessoa, utilizar a conta de terceiro ou consultar informacoes sem necessidade funcional, legal ou institucional claramente justificavel.</p>
+      <p><strong>Auditoria e rastreabilidade:</strong> ao prosseguir, voce declara ciencia de que todas as acoes realizadas neste sistema podem ser rastreadas e auditadas, incluindo nome, sobrenome, CPF, pagina acessada, data e hora, endereco IP, navegador, informacoes de dispositivo disponibilizadas pelo ambiente cliente e demais registros tecnicos e administrativos necessarios para apuracao de uso indevido.</p>
+      <p><strong>Responsabilizacao:</strong> consultas, visualizacoes, buscas, tentativas de compartilhamento indevido, uso fora da finalidade e qualquer tratamento irregular de informacoes podem ensejar apuracao administrativa, civil, disciplinar e, quando cabivel, penal.</p>
+      <p><strong>Declaracao do usuario:</strong> ao clicar em "Li e concordo", voce afirma que compreendeu a seriedade do conteudo acessado, que utilizara o sistema dentro dos limites legais e institucionais, e que aceita a gravacao de trilhas de auditoria vinculadas a sua identidade de acesso.</p>
+    </div>
+    <div class="terms-modal-footer">
+      <label class="toggle-line strong-line terms-checkline">
+        <input id="termsAcknowledge" type="checkbox" />
+        <span>Declaro que li integralmente, compreendi e concordo com o termo de responsabilidade e auditoria.</span>
+      </label>
+      <div class="button-row terms-action-row">
+        <button id="termsAcceptButton" class="primary-button terms-accept-button" type="button" disabled>Li e concordo</button>
+      </div>
+      <p id="termsFeedback" class="config-note">O uso do sistema permanece bloqueado ate a confirmacao do termo.</p>
+    </div>
+  </div>
+</section>

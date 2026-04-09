@@ -1,0 +1,135 @@
+<%- include('partials/head', { pageTitle }) %>
+<div class="shell">
+  <%- include('partials/brand-header', { href: '/', currentUser, canAccessAdmin }) %>
+  <main class="layout" id="layout">
+    <section class="search-stage">
+      <section class="hero-card" id="heroCard">
+        <p class="hero-kicker">Pesquisa documental</p>
+        <h1>
+          <span class="blue">A</span><span class="red">c</span><span class="yellow">e</span><span class="blue">r</span><span class="green">v</span><span class="red">o</span>
+        </h1>
+        <p class="hero-subtitle">Publico</p>
+
+        <div class="search-mode-head">
+          <a class="search-compact-brand" href="/" id="brandHome" aria-label="Voltar para a pagina inicial">
+            <span class="blue">A</span><span class="red">c</span><span class="yellow">e</span><span class="blue">r</span><span class="green">v</span><span class="red">o</span>
+          </a>
+          <form id="searchForm" class="search-form">
+          <div class="search-bar">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="m20 20-3.5-3.5"></path>
+            </svg>
+            <input
+              id="searchInput"
+              type="search"
+              placeholder="Digite termos, descricao, caixa, classificacao, hash ou ano"
+              autocomplete="off"
+            />
+            <div class="search-bar-actions">
+              <button id="imageSearchToggle" class="icon-button" type="button" aria-label="Pesquisar por imagem" title="Pesquisar por imagem">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="4" y="5" width="16" height="14" rx="2"></rect>
+                  <circle cx="9" cy="10" r="1.5"></circle>
+                  <path d="M20 16l-4.5-4.5-4 4-2.5-2.5L4 18"></path>
+                </svg>
+              </button>
+              <button id="advancedToggle" class="icon-button" type="button" aria-label="Abrir filtros" title="Abrir filtros">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 7h16"></path>
+                  <path d="M7 12h10"></path>
+                  <path d="M10 17h4"></path>
+                </svg>
+              </button>
+              <button class="primary-button" type="submit">Pesquisar</button>
+            </div>
+          </div>
+          </form>
+        </div>
+        <input id="imageSearchInput" type="file" accept="image/png,image/jpeg,image/webp" class="hidden" />
+        <div class="image-search-preview hidden" id="imageSearchPreview"></div>
+        <div class="query-prediction hidden" id="queryPrediction"></div>
+        <p class="hero-copy" id="heroCopy">
+          Busque por hash, classificacao, caixa, ano e conteudo textual com foco em resposta rapida.
+        </p>
+      </section>
+
+      <section class="search-tabs hidden" id="searchTabs" aria-label="Modos de exibicao">
+        <button class="search-tab active" data-tab="all" type="button">Tudo</button>
+        <button class="search-tab" data-tab="images" type="button">Com imagens</button>
+        <button class="search-tab" data-tab="summary" type="button">Com resumo</button>
+        <button class="search-tab" data-tab="indexed" type="button">Indexados</button>
+      </section>
+
+      <section class="search-toolbar hidden" id="advancedFilters">
+        <div class="filters-grid">
+          <label>
+            <span>Classificacao</span>
+            <select id="classificationFilter"></select>
+          </label>
+          <label>
+            <span>Caixa</span>
+            <select id="boxFilter"></select>
+          </label>
+          <label>
+            <span>Ano</span>
+            <select id="yearFilter"></select>
+          </label>
+          <label>
+            <span>Itens por pagina</span>
+            <select id="pageSize">
+              <option value="10" selected>10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="toolbar-actions">
+          <label class="toggle-line">
+            <input id="indexedOnlyToggle" type="checkbox" />
+            <span>Somente indexados</span>
+          </label>
+          <button id="clearFilters" class="ghost-button" type="button">Limpar</button>
+        </div>
+      </section>
+
+      <div class="results-header" id="resultsHeader">
+        <div class="results-context" id="resultsContext"></div>
+        <span id="searchLoadingState" class="search-loading-state hidden">Pesquisando...</span>
+      </div>
+
+      <div class="page-shell" id="pageShell">
+        <section class="results-column">
+          <section id="imageResults" class="image-results hidden"></section>
+          <section id="resultsList" class="results-list"></section>
+          <section class="bottom-pager" id="bottomPager">
+            <span id="pageInfo">Pagina 1</span>
+            <div class="pager">
+              <button id="prevPage" class="ghost-button" type="button">Anterior</button>
+              <button id="nextPage" class="ghost-button" type="button">Proxima</button>
+            </div>
+          </section>
+        </section>
+
+        <aside id="utilityPanel" class="utility-panel hidden"></aside>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer-bar">
+    <% if (canAccessAdmin) { %>
+      <button id="configEntry" class="footer-icon" type="button" aria-label="Abrir configuracoes">&#128274;</button>
+    <% } %>
+  </footer>
+</div>
+
+<%- include('partials/terms-modal', { currentUser }) %>
+
+<script src="/js/search-utils.js"></script>
+<script src="/js/search-api.js"></script>
+<script src="/js/search-render.js"></script>
+<script src="/js/search-controller.js"></script>
+<script src="/app.js"></script>
+<%- include('partials/footer-scripts') %>

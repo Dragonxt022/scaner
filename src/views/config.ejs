@@ -1,0 +1,113 @@
+<%
+  const sectionMeta = {
+    dashboard: {
+      kicker: 'Controle central',
+      title: 'Dashboard administrativo',
+      copy: 'Visibilidade de operacao, seguranca, rastreabilidade e processamento em um unico painel.',
+    },
+    users: {
+      kicker: 'Seguranca e pessoas',
+      title: 'Usuarios, perfis e credenciais',
+      copy: 'Gerencie acessos por CPF, politicas de senha, recuperacao e trilha administrativa.',
+    },
+    audit: {
+      kicker: 'Rastreabilidade',
+      title: 'Auditoria detalhada de usuarios',
+      copy: 'Acompanhe acessos, paginas consultadas, pesquisas executadas, IPs e comportamento de uso.',
+    },
+    settings: {
+      kicker: 'Preferencias',
+      title: 'Parametros operacionais do sistema',
+      copy: 'Centralize configuracoes de execucao, seguranca e comportamento do ambiente.',
+    },
+    indexing: {
+      kicker: 'Operacao',
+      title: 'Fila de indexacao em tempo real',
+      copy: 'Veja lotes, documentos pendentes, gargalos, fila detalhada e eventos do indexador.',
+    },
+    downloads: {
+      kicker: 'Operacao',
+      title: 'Downloads e transferencia de acervo',
+      copy: 'Monitore o fluxo de arquivos, concorrencia, progresso total e pendencias da coleta.',
+    },
+    logs: {
+      kicker: 'Suporte tecnico',
+      title: 'Logs tecnicos e falhas operacionais',
+      copy: 'Consolide diagnosticos, eventos recentes, erros de lote e sinais do motor interno.',
+    },
+    maintenance: {
+      kicker: 'Tratamento',
+      title: 'Higienizacao e manutencao do acervo',
+      copy: 'Revise candidatos a correcao, execute manutencoes e trate inconsistencias de processamento.',
+    },
+    enrichment: {
+      kicker: 'IA e midia',
+      title: 'Enriquecimento de conteudo',
+      copy: 'Controle resumos, miniaturas, modelos e rotinas de enriquecimento do acervo.',
+    },
+  };
+  const currentSection = sectionMeta[activeSection] || sectionMeta.dashboard;
+%>
+<%- include('partials/head', { pageTitle, bodyPage: `config-${activeSection}` }) %>
+<div class="shell">
+  <%- include('partials/brand-header', { href: '/', currentUser, canAccessAdmin: true }) %>
+
+  <main class="config-shell config-page">
+    <section class="config-admin-layout hidden" id="configPanel">
+      <%- include('partials/config-sidebar', { activeSection, currentUser }) %>
+
+      <section class="config-workspace">
+        <section class="config-content">
+          <header class="config-page-head">
+            <div>
+              <p class="panel-kicker"><%= currentSection.kicker %></p>
+              <h1 id="configTitle"><%= currentSection.title %></h1>
+              <p class="config-workspace-copy" id="configLead"><%= currentSection.copy %></p>
+            </div>
+          </header>
+
+          <% if (activeSection === 'dashboard') { %>
+            <%- include('partials/config-dashboard') %>
+          <% } %>
+
+          <% if (activeSection === 'settings') { %>
+            <%- include('partials/config-settings') %>
+          <% } %>
+
+          <% if (activeSection === 'indexing') { %>
+            <%- include('partials/config-indexing') %>
+          <% } %>
+
+          <% if (activeSection === 'downloads') { %>
+            <%- include('partials/config-downloads') %>
+          <% } %>
+
+          <% if (activeSection === 'logs') { %>
+            <%- include('partials/config-logs') %>
+          <% } %>
+
+          <% if (activeSection === 'audit') { %>
+            <%- include('partials/config-audit') %>
+          <% } %>
+
+          <% if (activeSection === 'maintenance') { %>
+            <%- include('partials/config-maintenance') %>
+          <% } %>
+
+          <% if (activeSection === 'enrichment') { %>
+            <%- include('partials/config-enrichment') %>
+          <% } %>
+
+          <% if (activeSection === 'users') { %>
+            <%- include('partials/config-users') %>
+          <% } %>
+        </section>
+      </section>
+    </section>
+  </main>
+</div>
+
+<%- include('partials/terms-modal', { currentUser }) %>
+
+<script src="/js/config-page.js"></script>
+<%- include('partials/footer-scripts') %>

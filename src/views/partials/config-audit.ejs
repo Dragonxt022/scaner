@@ -1,0 +1,34 @@
+<article class="config-card">
+  <div class="section-head">
+    <div>
+      <p class="panel-kicker">Rastreabilidade</p>
+      <h3>Auditoria de usuarios</h3>
+    </div>
+  </div>
+
+  <div id="auditSummaryStats" class="table-shell"></div>
+  <p class="config-note" id="auditSummaryFeedback">Carregando trilhas de acesso e pesquisa.</p>
+
+  <div class="config-section-grid compact-grid">
+    <div>
+      <h4 class="config-subtitle">Acessos de usuarios</h4>
+      <div class="table-toolbar">
+        <label>
+          <span>Filtrar acessos</span>
+          <input id="accessLogSearch" type="text" placeholder="Nome, CPF, evento, pagina, IP" />
+        </label>
+      </div>
+      <div id="accessLogsList" class="table-shell"></div>
+    </div>
+    <div>
+      <h4 class="config-subtitle">Historico de pesquisas</h4>
+      <div class="table-toolbar">
+        <label>
+          <span>Filtrar pesquisas</span>
+          <input id="searchLogSearch" type="text" placeholder="Nome, CPF, termo, classificacao, caixa" />
+        </label>
+      </div>
+      <div id="searchLogsList" class="table-shell"></div>
+    </div>
+  </div>
+</article>

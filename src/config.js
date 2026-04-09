@@ -1,0 +1,43 @@
+const path = require('node:path');
+require('dotenv').config();
+
+const rootDir = process.cwd();
+
+module.exports = {
+  allowInsecureTls: process.env.ALLOW_INSECURE_TLS !== 'false',
+  appLogging: process.env.APP_LOGGING !== 'false',
+  artifactsDir: path.join(rootDir, 'artifacts'),
+  authEnabled: process.env.AUTH_ENABLED !== 'false' && process.env.NODE_ENV !== 'test',
+  defaultAdminCpf: process.env.ADMIN_DEFAULT_CPF || '12345678901',
+  defaultAdminName: process.env.ADMIN_DEFAULT_NAME || 'Administrador do sistema',
+  defaultAdminPassword: process.env.ADMIN_DEFAULT_PASSWORD || 'Admin@123',
+  dbDialect: (process.env.DB_DIALECT || 'sqlite').trim().toLowerCase(),
+  dbHost: process.env.DB_HOST || '127.0.0.1',
+  dbLogging: process.env.DB_LOGGING === 'true',
+  dbName: process.env.DB_NAME || 'scaner',
+  dbPath: process.env.DB_PATH || path.join(rootDir, 'data', 'scaner.sqlite'),
+  dbPassword: process.env.DB_PASSWORD || '',
+  dbPort: Number(process.env.DB_PORT || 3306),
+  dbUser: process.env.DB_USER || 'root',
+  indexConcurrency: Number(process.env.INDEX_CONCURRENCY || 4),
+  indexDownloadRetries: Number(process.env.INDEX_DOWNLOAD_RETRIES || 2),
+  indexTimeoutMaxMs: Number(process.env.INDEX_TIMEOUT_MAX_MS || 600000),
+  indexTimeoutMs: Number(process.env.INDEX_TIMEOUT_MS || 120000),
+  host: process.env.HOST || '0.0.0.0',
+  ocrEnabled: process.env.OCR_ENABLED === 'true',
+  ocrLanguage: process.env.OCR_LANGUAGE || 'por',
+  ocrMaxPages: Number(process.env.OCR_MAX_PAGES || 0),
+  ocrScreenshotWidth: Number(process.env.OCR_SCREENSHOT_WIDTH || 1800),
+  port: Number(process.env.PORT || 3000),
+  passwordResetCodeLength: Number(process.env.PASSWORD_RESET_CODE_LENGTH || 8),
+  passwordResetExpiryMinutes: Number(process.env.PASSWORD_RESET_EXPIRY_MINUTES || 30),
+  passwordResetRequestExpiryHours: Number(process.env.PASSWORD_RESET_REQUEST_EXPIRY_HOURS || 24),
+  sessionCookieName: process.env.SESSION_COOKIE_NAME || 'scaner_session',
+  sessionDurationHours: Number(process.env.SESSION_DURATION_HOURS || 12),
+  sessionIdleMinutes: Number(process.env.SESSION_IDLE_MINUTES || 30),
+  maxLoginAttempts: Number(process.env.MAX_LOGIN_ATTEMPTS || 5),
+  loginLockMinutes: Number(process.env.LOGIN_LOCK_MINUTES || 15),
+  syncCatalogOnBoot: process.env.SYNC_CATALOG_ON_BOOT !== 'false',
+  termsVersion: process.env.TERMS_VERSION || '2026-04-09',
+  enforceHttpsOutsideLocalNetwork: process.env.ENFORCE_HTTPS_OUTSIDE_LOCAL_NETWORK !== 'false',
+};

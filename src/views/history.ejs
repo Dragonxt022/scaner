@@ -1,0 +1,34 @@
+<%- include('partials/head', { pageTitle, bodyPage: 'history' }) %>
+<div class="shell">
+  <%- include('partials/brand-header', { href: '/', currentUser, canAccessAdmin }) %>
+  <main class="detail-shell history-page">
+    <section class="history-hero">
+      <p class="hero-kicker">Meu historico</p>
+      <h1>Pesquisas executadas por voce</h1>
+      <p class="detail-hero-copy">Esta tela mostra somente o historico do usuario autenticado. Nenhuma pesquisa de outros usuarios aparece aqui.</p>
+    </section>
+
+    <section class="config-card">
+      <div class="section-head">
+        <div>
+          <p class="panel-kicker">Pesquisa pessoal</p>
+          <h3>Historico individual</h3>
+        </div>
+      </div>
+      <div class="table-toolbar">
+        <label>
+          <span>Filtrar minhas pesquisas</span>
+          <input id="myHistorySearch" type="text" placeholder="Termo, classificacao, caixa, ano ou tipo" />
+        </label>
+      </div>
+      <div id="myHistoryList" class="table-shell"></div>
+      <p id="myHistoryFeedback" class="config-note">Carregando historico do usuario logado.</p>
+    </section>
+  </main>
+</div>
+
+<%- include('partials/terms-modal', { currentUser }) %>
+
+<script src="/js/history-page.js"></script>
+<script src="/app.js"></script>
+<%- include('partials/footer-scripts') %>

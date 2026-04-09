@@ -1,0 +1,144 @@
+<%- include('partials/head', { pageTitle }) %>
+<div class="shell">
+  <%- include('partials/brand-header', { href: '/', currentUser, canAccessAdmin }) %>
+  <main class="detail-shell detail-page">
+    <header class="detail-site-header">
+      <a class="detail-brand" href="/" aria-label="Voltar para a busca principal">
+        <span class="blue">A</span><span class="red">c</span><span class="yellow">e</span><span class="blue">r</span><span class="green">v</span><span class="red">o</span>
+      </a>
+      <a class="detail-home-link" href="/">Voltar para a busca</a>
+    </header>
+
+    <section class="detail-hero detail-hero-article">
+      <nav class="detail-breadcrumb" aria-label="Caminho do documento">
+        <a href="/">Inicio</a>
+        <span>/</span>
+        <span>Acervo</span>
+        <span>/</span>
+        <strong id="detailBreadcrumbTitle">Documento</strong>
+      </nav>
+      <p class="hero-kicker">Arquivo do acervo</p>
+      <h1 id="detailTitle">Carregando...</h1>
+      <p class="detail-hero-copy" id="detailLead">Buscando informacoes do documento.</p>
+      <div class="detail-hero-actions">
+        <a class="detail-action-primary" id="detailPdf" href="#" target="_blank" rel="noreferrer">Visualizar PDF</a>
+        <a class="detail-action-secondary" id="detailSource" href="#" target="_blank" rel="noreferrer">Abrir referencia</a>
+        <a class="detail-action-ghost" href="/">Voltar para a busca</a>
+        <button class="detail-action-ghost detail-action-subtle" id="detailReprocess" type="button">Refazer processo</button>
+      </div>
+      <p class="detail-inline-feedback hidden" id="detailReprocessFeedback"></p>
+    </section>
+
+    <section class="detail-story-layout">
+      <article class="detail-story-main">
+        <section class="detail-card detail-story-card">
+          <div class="detail-card-head">
+            <p class="results-kicker">📄 Sinopse</p>
+            <h2>Sobre este arquivo</h2>
+          </div>
+          <p class="detail-lead-text" id="detailDescricao">--</p>
+          <div class="detail-story-highlights">
+            <article class="detail-story-highlight">
+              <span>Classificacao</span>
+              <strong id="detailClassificacao">--</strong>
+            </article>
+            <article class="detail-story-highlight">
+              <span>Caixa</span>
+              <strong id="detailCaixa">--</strong>
+            </article>
+            <article class="detail-story-highlight">
+              <span>Ano</span>
+              <strong id="detailAno">--</strong>
+            </article>
+          </div>
+        </section>
+
+        <section class="detail-card detail-story-card hidden" id="detailSummaryCard">
+          <div class="detail-card-head">
+            <p class="results-kicker">Resumo trabalhado</p>
+            <h2>Leitura orientada do documento</h2>
+          </div>
+          <div class="detail-summary-rich" id="detailSummaryRich">Sem resumo enriquecido.</div>
+        </section>
+
+        <section class="detail-card detail-story-card">
+          <div class="detail-card-head">
+            <p class="results-kicker">📖 Conteudo</p>
+            <h2>Leitura indexada</h2>
+            <div class="detail-card-tools">
+              <button class="detail-inline-button" id="detailCopyText" type="button">Copiar texto</button>
+            </div>
+          </div>
+          <div class="detail-text-shell">
+            <div class="detail-text-meta" id="detailTextMeta">Preparando leitura...</div>
+            <div class="detail-text-preview is-collapsed" id="detailTextPreview">Carregando texto...</div>
+            <button class="detail-expand-button hidden" id="detailExpandText" type="button">Visualizar mais</button>
+          </div>
+        </section>
+      </article>
+
+      <aside class="detail-story-sidebar">
+        <section class="detail-card detail-side-card">
+          <div class="detail-card-head">
+            <p class="results-kicker">📊 Ficha tecnica</p>
+            <h2>Dados do arquivo</h2>
+          </div>
+          <div class="detail-info-list">
+            <div>
+              <span>Arquivo</span>
+              <strong id="detailFile">--</strong>
+            </div>
+            <div>
+              <span>Hash</span>
+              <strong id="detailHash" title="Identificador tecnico unico do arquivo">--</strong>
+            </div>
+            <div>
+              <span>Status</span>
+              <strong id="detailStatus">--</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="detail-card detail-side-card detail-side-visual hidden" id="detailSidebarVisualWrap">
+          <div class="detail-card-head">
+            <p class="results-kicker">Visual do documento</p>
+            <h2>Imagens referenciadas</h2>
+          </div>
+          <div class="detail-side-visual-media">
+            <img id="detailSidebarVisual" alt="Miniatura do documento" />
+          </div>
+          <div class="detail-side-gallery" id="detailSidebarGallery"></div>
+        </section>
+      </aside>
+    </section>
+  </main>
+</div>
+
+<button class="detail-ai-fab" id="detailAiFab" type="button" aria-label="Abrir perguntas com IA">
+  <span>AI</span>
+</button>
+
+<section class="detail-ai-drawer hidden" id="detailAiDrawer" aria-live="polite">
+  <div class="detail-ai-drawer-head">
+    <div>
+      <p class="results-kicker">Assistente IA</p>
+      <h2>Pergunte sobre este arquivo</h2>
+    </div>
+    <button class="detail-ai-close" id="detailAiClose" type="button" aria-label="Fechar perguntas com IA">×</button>
+  </div>
+  <p class="detail-lead-text">Use perguntas curtas para localizar informacoes no proprio documento sem sair da pagina.</p>
+  <form class="detail-ai-form" id="detailAiForm">
+    <div class="detail-ai-input-row">
+      <span class="detail-ai-icon" aria-hidden="true">AI</span>
+      <input id="detailAiQuestion" type="text" placeholder="Ex.: Qual o assunto principal deste decreto?" maxlength="400" />
+      <button type="submit" class="primary-button">Perguntar</button>
+    </div>
+  </form>
+  <div class="detail-ai-status hidden" id="detailAiStatus"></div>
+  <div class="detail-ai-answer hidden" id="detailAiAnswer"></div>
+</section>
+
+<%- include('partials/terms-modal', { currentUser }) %>
+
+<script src="/js/document-page.js"></script>
+<%- include('partials/footer-scripts') %>

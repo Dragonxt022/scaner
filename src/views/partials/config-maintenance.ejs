@@ -1,0 +1,105 @@
+<article class="config-card">
+  <div class="section-head">
+    <div>
+      <p class="panel-kicker">Tratamento</p>
+      <h3>Limpeza e reprocessamento</h3>
+    </div>
+  </div>
+  <div class="stats-grid" id="maintenanceInsights"></div>
+  <p class="config-note">
+    Recomendacao atual: priorizar documentos com pouco texto para muitas paginas, erros recentes e itens indexados sem metodo registrado.
+  </p>
+
+  <div class="form-grid maintenance-form">
+    <label>
+      <span>Fila alvo</span>
+      <select id="maintenanceStrategy">
+        <option value="short-multipage" selected>Texto curto em PDF grande</option>
+        <option value="force-ocr">Forcar OCR novamente</option>
+        <option value="recent-errors">Falhas recentes</option>
+        <option value="short-indexed">Indexados com texto curto</option>
+        <option value="null-method">Indexados sem metodo</option>
+        <option value="empty-indexed">Indexados vazios</option>
+      </select>
+    </label>
+    <label>
+      <span>Quantidade</span>
+      <select id="maintenanceLimit">
+        <option value="10" selected>10</option>
+        <option value="25">25</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+      </select>
+    </label>
+    <label>
+      <span>Modo de reprocesso</span>
+      <select id="maintenanceMode">
+        <option value="ocr" selected>OCR forcado</option>
+        <option value="hybrid">Hibrido</option>
+        <option value="native">Texto nativo</option>
+      </select>
+    </label>
+    <label class="toggle-line maintenance-toggle">
+      <input id="maintenanceResetAttempts" type="checkbox" checked />
+      <span>Zerar tentativas ao limpar</span>
+    </label>
+  </div>
+
+  <div class="button-row">
+    <button id="maintenancePreview" class="ghost-button" type="button">Analisar fila</button>
+    <button id="maintenanceClear" class="ghost-button danger-button" type="button">Limpar e voltar para pendente</button>
+    <button id="maintenanceReprocess" class="primary-button" type="button">Limpar e reprocessar agora</button>
+  </div>
+
+  <p class="config-note" id="maintenanceFeedback">Aguardando analise.</p>
+  <div id="maintenanceCandidates" class="stack-list"></div>
+</article>
+
+<article class="config-card">
+  <div class="section-head">
+    <div>
+      <p class="panel-kicker">Saneamento textual</p>
+      <h3>Corrigir textos ja indexados</h3>
+    </div>
+  </div>
+  <p class="config-note">
+    Use esta ferramenta quando o documento ja esta indexado, mas o texto salvo ficou ruim de ler. Ela reescreve o texto no banco e atualiza o indice de busca sem baixar o PDF de novo.
+  </p>
+
+  <div class="form-grid maintenance-form">
+    <label>
+      <span>Perfil</span>
+      <select id="textCleanupStrategy">
+        <option value="low-quality" selected>Baixa legibilidade</option>
+        <option value="payroll-layout">Folha e contracheque</option>
+        <option value="long-lines">Linhas muito densas</option>
+      </select>
+    </label>
+    <label>
+      <span>Quantidade</span>
+      <select id="textCleanupLimit">
+        <option value="5">5</option>
+        <option value="10" selected>10</option>
+        <option value="25">25</option>
+        <option value="50">50</option>
+      </select>
+    </label>
+    <label>
+      <span>Amostra de analise</span>
+      <select id="textCleanupSampleSize">
+        <option value="100">100</option>
+        <option value="200" selected>200</option>
+        <option value="500">500</option>
+        <option value="1000">1000</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="button-row">
+    <button id="textCleanupPreview" class="ghost-button" type="button">Gerar preview</button>
+    <button id="textCleanupRun" class="primary-button" type="button">Aplicar limpeza no texto salvo</button>
+  </div>
+
+  <p class="config-note" id="textCleanupFeedback">Aguardando preview.</p>
+  <div id="textCleanupCandidates" class="stack-list"></div>
+</article>
