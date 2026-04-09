@@ -5,6 +5,13 @@
     <input id="autoIndexOnDetailView" type="checkbox" />
     <span>Indexar automaticamente ao abrir documento sem texto</span>
   </label>
+  <label class="toggle-line strong-line">
+    <input id="localLibraryAutoSync" type="checkbox" />
+    <span>Sincronizar automaticamente o acervo local</span>
+  </label>
+  <p class="config-note">
+    Quando ativado, o servidor monitora a pasta <strong>data/local-acervo</strong> e sincroniza novos arquivos automaticamente (padrão: desativado).
+  </p>
   <p class="config-note" id="configFeedback">
     Desligado por padrao. Quando ligado, a pagina de detalhes tenta indexar o PDF ao ser aberta se ainda nao houver texto anexado.
   </p>

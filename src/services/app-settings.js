@@ -14,6 +14,7 @@ const DEFAULTS = {
   enrichmentPreviewImagesEnabled: 'false',
   enrichmentProvider: 'disabled',
   enrichmentSummaryEnabled: 'true',
+  localLibraryAutoSync: 'false',
 };
 
 function normalizeBoolean(value, fallback = false) {

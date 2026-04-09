@@ -98,6 +98,7 @@
     indexerStatusText: document.querySelector('#indexerStatusText'),
     indexerUpdatedAt: document.querySelector('#indexerUpdatedAt'),
     localLibraryFeedback: document.querySelector('#localLibraryFeedback'),
+    localLibraryAutoSync: document.querySelector('#localLibraryAutoSync'),
     localLibraryList: document.querySelector('#localLibraryList'),
     localLibrarySearch: document.querySelector('#localLibrarySearch'),
     localLibraryStats: document.querySelector('#localLibraryStats'),
@@ -1170,6 +1171,9 @@
     }
     if (data.settings && elements.autoIndexOnDetailView) {
       elements.autoIndexOnDetailView.checked = Boolean(data.settings.autoIndexOnDetailView);
+      if (elements.localLibraryAutoSync) {
+        elements.localLibraryAutoSync.checked = Boolean(data.settings.localLibraryAutoSync);
+      }
     }
     if (data.settings && elements.enrichmentProvider && !state.enrichmentDirty) {
       elements.enrichmentProvider.value = data.settings.enrichmentProvider || 'disabled';
@@ -1370,6 +1374,24 @@
           feedback.textContent = result.autoIndexOnDetailView
             ? 'Autoindexacao em pagina de detalhe ativada.'
             : 'Autoindexacao em pagina de detalhe desativada.';
+        } catch (error) {
+          feedback.textContent = error.message;
+        }
+      });
+    }
+
+    if (elements.localLibraryAutoSync) {
+      elements.localLibraryAutoSync.addEventListener('change', async (event) => {
+        const feedback = getFeedbackElement(elements.configFeedback);
+        feedback.textContent = 'Salvando configuracao...';
+        try {
+          const result = await runPost('/api/admin/settings', {
+            localLibraryAutoSync: event.target.checked,
+          });
+          event.target.checked = Boolean(result.localLibraryAutoSync);
+          feedback.textContent = result.localLibraryAutoSync
+            ? 'Sincronizacao automatica do acervo local ativada.'
+            : 'Sincronizacao automatica do acervo local desativada.';
         } catch (error) {
           feedback.textContent = error.message;
         }
