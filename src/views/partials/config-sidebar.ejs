@@ -21,18 +21,34 @@
       </nav>
     </div>
 
-    <div class="config-nav-group">
-      <p class="config-nav-title">Seguranca e pessoas</p>
-      <nav class="config-nav">
-        <a class="config-nav-button <%= activeSection === 'users' ? 'active' : '' %>" href="/config/users">Usuarios</a>
-        <a class="config-nav-button <%= activeSection === 'audit' ? 'active' : '' %>" href="/config/audit">Rastreabilidade</a>
-        <a class="config-nav-button <%= activeSection === 'settings' ? 'active' : '' %>" href="/config/settings">Preferencias</a>
+    <div class="config-nav-group config-nav-collapsible" data-collapsed="<%= !['users', 'settings', 'audit'].includes(activeSection) %>">
+      <p class="config-nav-title">Configuracao</p>
+      <button class="config-nav-toggle" type="button" aria-expanded="<%= ['users', 'settings', 'audit'].includes(activeSection) ? 'true' : 'false' %>">
+        <span>Exibir submenu</span>
+      </button>
+      <nav class="config-nav config-nav-panel">
+        <div class="config-nav-subgroup">
+          <p class="config-nav-subtitle">Seguranca e pessoas</p>
+          <a class="config-nav-button config-nav-button-sub <%= activeSection === 'users' ? 'active' : '' %>" href="/config/users">Usuarios</a>
+        </div>
+        <div class="config-nav-subgroup">
+          <p class="config-nav-subtitle">Politicas do sistema</p>
+          <a class="config-nav-button config-nav-button-sub <%= activeSection === 'settings' ? 'active' : '' %>" href="/config/settings">Preferencias</a>
+        </div>
+        <div class="config-nav-subgroup">
+          <p class="config-nav-subtitle">Auditoria</p>
+          <a class="config-nav-button config-nav-button-sub <%= activeSection === 'audit' ? 'active' : '' %>" href="/config/audit">Rastreabilidade</a>
+        </div>
       </nav>
     </div>
 
-    <div class="config-nav-group">
-      <p class="config-nav-title">Operacao</p>
-      <nav class="config-nav">
+    <div class="config-nav-group config-nav-collapsible" data-collapsed="<%= !['indexing', 'downloads', 'logs', 'maintenance', 'enrichment'].includes(activeSection) %>">
+      <p class="config-nav-title">Ferramentas de execucao</p>
+      <button class="config-nav-toggle" type="button" aria-expanded="<%= ['indexing', 'downloads', 'logs', 'maintenance', 'enrichment'].includes(activeSection) ? 'true' : 'false' %>">
+        <span>Exibir submenu</span>
+      </button>
+      <nav class="config-nav config-nav-panel">
+        <a class="config-nav-button" href="/monitor">Monitor ao vivo</a>
         <a class="config-nav-button <%= activeSection === 'indexing' ? 'active' : '' %>" href="/config/indexing">Indexacao</a>
         <a class="config-nav-button <%= activeSection === 'downloads' ? 'active' : '' %>" href="/config/downloads">Downloads</a>
         <a class="config-nav-button <%= activeSection === 'logs' ? 'active' : '' %>" href="/config/logs">Logs e erros</a>

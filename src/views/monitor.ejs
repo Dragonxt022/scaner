@@ -1,0 +1,91 @@
+<%- include('partials/head', { pageTitle, bodyPage: 'monitor' }) %>
+<div class="shell">
+  <%- include('partials/brand-header', { href: '/', currentUser, canAccessAdmin }) %>
+  <main class="detail-shell monitor-page">
+    <section class="monitor-hero">
+      <div>
+        <p class="hero-kicker">Monitor ao vivo</p>
+        <h1>Uso, acessos e pesquisas em tempo real</h1>
+        <p class="detail-hero-copy">Tela continua para acompanhar atividade do sistema, trilhas de uso e desempenho operacional sem abrir o painel completo.</p>
+      </div>
+      <div class="monitor-toolbar">
+        <span class="monitor-live-chip">Atualizacao automatica</span>
+        <button id="monitorRefresh" class="ghost-button" type="button">Atualizar agora</button>
+      </div>
+    </section>
+
+    <section class="monitor-kpis" id="monitorKpis"></section>
+
+    <section class="monitor-grid">
+      <article class="config-card monitor-card">
+        <div class="section-head">
+          <div>
+            <p class="panel-kicker">Uso consolidado</p>
+            <h3>Eventos por minuto</h3>
+          </div>
+        </div>
+        <div id="monitorUsageChart" class="chart-shell"></div>
+      </article>
+
+      <article class="config-card monitor-card">
+        <div class="section-head">
+          <div>
+            <p class="panel-kicker">Acessos</p>
+            <h3>Navegacao e autenticacao</h3>
+          </div>
+        </div>
+        <div id="monitorAccessChart" class="chart-shell"></div>
+      </article>
+
+      <article class="config-card monitor-card">
+        <div class="section-head">
+          <div>
+            <p class="panel-kicker">Pesquisas</p>
+            <h3>Consultas executadas</h3>
+          </div>
+        </div>
+        <div id="monitorSearchChart" class="chart-shell"></div>
+      </article>
+
+      <article class="config-card monitor-card">
+        <div class="section-head">
+          <div>
+            <p class="panel-kicker">Motores</p>
+            <h3>Estado operacional</h3>
+          </div>
+        </div>
+        <div id="monitorRuntimeTable" class="table-shell"></div>
+      </article>
+    </section>
+
+    <section class="monitor-grid">
+      <article class="config-card monitor-card">
+        <div class="section-head">
+          <div>
+            <p class="panel-kicker">Acessos recentes</p>
+            <h3>Ultimos eventos</h3>
+          </div>
+        </div>
+        <div id="monitorAccessTable" class="table-shell"></div>
+      </article>
+
+      <article class="config-card monitor-card">
+        <div class="section-head">
+          <div>
+            <p class="panel-kicker">Pesquisas recentes</p>
+            <h3>Ultimas consultas</h3>
+          </div>
+        </div>
+        <div id="monitorSearchTable" class="table-shell"></div>
+      </article>
+    </section>
+
+    <p id="monitorFeedback" class="config-note">Inicializando monitor.</p>
+  </main>
+</div>
+
+<%- include('partials/terms-modal', { currentUser }) %>
+
+<script src="/js/monitor-page.js"></script>
+<script src="/app.js"></script>
+<%- include('partials/footer-scripts') %>

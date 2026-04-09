@@ -77,6 +77,15 @@ router.get('/history', requireAuthPage, (request, response) => {
   });
 });
 
+router.get('/monitor', requireAdminPage, (request, response) => {
+  recordAccessLog(request, request.authUser, 'page_view', 'Acesso ao monitor ao vivo.');
+  response.render('monitor', {
+    canAccessAdmin: response.locals.canAccessAdmin,
+    currentUser: response.locals.currentUser,
+    pageTitle: 'Acervo Publico - Monitor ao vivo',
+  });
+});
+
 router.get('/config', requireAdminPage, (request, response) => {
   recordAccessLog(request, request.authUser, 'page_view', 'Acesso ao painel administrativo.');
   renderConfigPage(response, request, 'dashboard');

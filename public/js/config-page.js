@@ -1170,6 +1170,17 @@
   }
 
   function bindEvents() {
+    document.querySelectorAll('.config-nav-collapsible').forEach((group) => {
+      const toggle = group.querySelector('.config-nav-toggle');
+      if (!toggle || toggle.dataset.bound === 'true') return;
+      toggle.dataset.bound = 'true';
+      toggle.addEventListener('click', () => {
+        const collapsed = group.dataset.collapsed === 'true';
+        group.dataset.collapsed = collapsed ? 'false' : 'true';
+        toggle.setAttribute('aria-expanded', collapsed ? 'true' : 'false');
+      });
+    });
+
     if (elements.logoutButton) {
       elements.logoutButton.addEventListener('click', async () => {
         try {
