@@ -342,6 +342,53 @@ test('admin enrichment models lista modelos automaticamente para endpoint estilo
   }
 });
 
+test('admin enrichment models lista modelos automaticamente para endpoint nativo do Ollama', async () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'scaner-app-test-'));
+  const dbPath = path.join(tempDir, 'app.sqlite');
+
+  try {
+    const { app, closeDatabase, closeSequelize } = setupApp(dbPath);
+    const { server, baseUrl } = await startServer(app);
+    const ollamaServerInfo = await startJsonServer((request, response) => {
+      if (request.url === '/api/tags') {
+        response.writeHead(200, { 'content-type': 'application/json' });
+        response.end(JSON.stringify({
+          models: [
+            { model: 'qwen2.5:7b' },
+            { name: 'llama3.1:8b' },
+          ],
+        }));
+        return;
+      }
+
+      response.writeHead(404, { 'content-type': 'application/json' });
+      response.end(JSON.stringify({ error: 'not found' }));
+    });
+
+    try {
+      const response = await fetch(
+        `${baseUrl}/api/admin/enrichment/models?${new URLSearchParams({
+          baseUrl: `${ollamaServerInfo.baseUrl}/api`,
+          provider: 'local',
+        })}`,
+      );
+      const body = await response.json();
+
+      assert.equal(response.status, 200);
+      assert.equal(body.provider, 'local');
+      assert.equal(body.endpoint, `${ollamaServerInfo.baseUrl}/api/tags`);
+      assert.deepEqual(body.models, ['qwen2.5:7b', 'llama3.1:8b']);
+    } finally {
+      await new Promise((resolve, reject) => ollamaServerInfo.server.close((error) => (error ? reject(error) : resolve())));
+      await new Promise((resolve, reject) => server.close((error) => (error ? reject(error) : resolve())));
+      await closeSequelize();
+      closeDatabase();
+    }
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
 test('search image usa IA local para extrair consulta e retorna resultados', async () => {
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'scaner-app-test-'));
   const dbPath = path.join(tempDir, 'app.sqlite');
@@ -507,6 +554,185 @@ test('documents ask usa IA para responder perguntas sobre o arquivo', async () =
       assert.equal(response.status, 200);
       assert.equal(body.model, 'qa-test');
       assert.match(body.answer, /credito adicional suplementar/i);
+    } finally {
+      await new Promise((resolve, reject) => aiServerInfo.server.close((error) => (error ? reject(error) : resolve())));
+      await new Promise((resolve, reject) => server.close((error) => (error ? reject(error) : resolve())));
+      await closeSequelize();
+      closeDatabase();
+    }
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+test('search image usa endpoint nativo do Ollama para extrair consulta e retorna resultados', async () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'scaner-app-test-'));
+  const dbPath = path.join(tempDir, 'app.sqlite');
+
+  try {
+    const { app, closeDatabase, closeSequelize, repository } = setupApp(dbPath);
+    repository.replaceDocuments([
+      {
+        source_key: 'doc-image-ollama-1',
+        content_key: 'group-image-ollama-1',
+        hash_verificacao: 'IMG-OLLAMA-001',
+        pdf_url: 'https://example.com/image-ollama-1.pdf',
+        detail_url: 'https://example.com/image-ollama-1',
+        nome_arquivo: 'image-ollama-1.pdf',
+        classificacao: 'RH',
+        caixa: 'Servidores',
+        descricao: 'Maria de Souza',
+        ano: '2024',
+      },
+    ]);
+    repository.saveDocumentContent(1, 'MARIA DE SOUZA', {
+      extractor: 'pdf-parse',
+      pageCount: 1,
+    });
+
+    const { server, baseUrl } = await startServer(app);
+    const aiServerInfo = await startJsonServer((request, response) => {
+      if (request.url === '/api/chat') {
+        let rawBody = '';
+        request.on('data', (chunk) => {
+          rawBody += chunk;
+        });
+        request.on('end', () => {
+          const body = JSON.parse(rawBody);
+          assert.equal(body.model, 'vision-ollama');
+          assert.equal(body.stream, false);
+          assert.equal(body.messages[0]?.role, 'system');
+          assert.equal(body.messages[1]?.role, 'user');
+          assert.equal(body.messages[1]?.content, 'Leia a imagem e devolva apenas o texto visivel mais relevante para busca documental. Preserve nomes, numeros, datas, processos, caixas, classificacoes e termos centrais.');
+          assert.equal(Array.isArray(body.messages[1]?.images), true);
+          assert.equal(body.messages[1]?.images?.length, 1);
+          assert.doesNotMatch(body.messages[1]?.images?.[0] || '', /^data:image\//);
+          response.writeHead(200, { 'content-type': 'application/json' });
+          response.end(JSON.stringify({
+            message: {
+              content: 'Maria de Souza',
+            },
+          }));
+        });
+        return;
+      }
+
+      response.writeHead(404, { 'content-type': 'application/json' });
+      response.end(JSON.stringify({ error: 'not found' }));
+    });
+
+    try {
+      await fetch(`${baseUrl}/api/admin/settings`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          enrichmentBaseUrl: `${aiServerInfo.baseUrl}/api`,
+          enrichmentModel: 'vision-ollama',
+          enrichmentProvider: 'local',
+        }),
+      });
+
+      const response = await fetch(`${baseUrl}/api/search/image`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          imageDataUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wn7nV4AAAAASUVORK5CYII=',
+          pageSize: 10,
+        }),
+      });
+      const body = await response.json();
+
+      assert.equal(response.status, 200);
+      assert.equal(body.extractedText, 'Maria de Souza');
+      assert.equal(body.query, 'Maria Souza');
+      assert.equal(body.search.total, 1);
+    } finally {
+      await new Promise((resolve, reject) => aiServerInfo.server.close((error) => (error ? reject(error) : resolve())));
+      await new Promise((resolve, reject) => server.close((error) => (error ? reject(error) : resolve())));
+      await closeSequelize();
+      closeDatabase();
+    }
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+test('documents ask usa endpoint nativo do Ollama para responder perguntas sobre o arquivo', async () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'scaner-app-test-'));
+  const dbPath = path.join(tempDir, 'app.sqlite');
+
+  try {
+    const { app, closeDatabase, closeSequelize, repository } = setupApp(dbPath);
+    repository.replaceDocuments([
+      {
+        source_key: 'doc-ask-ollama-1',
+        content_key: 'group-ask-ollama-1',
+        hash_verificacao: 'ASK-OLLAMA-001',
+        pdf_url: 'https://example.com/ask-ollama-1.pdf',
+        detail_url: 'https://example.com/ask-ollama-1',
+        nome_arquivo: 'ask-ollama-1.pdf',
+        classificacao: 'Portarias',
+        caixa: 'Arquivo Central',
+        descricao: 'Portaria 15 de 2024',
+        ano: '2024',
+      },
+    ]);
+    repository.saveDocumentContent(1, 'PORTARIA 15 DE 2024. Nomeia Maria de Souza para o cargo de diretora administrativa.', {
+      extractor: 'pdf-parse',
+      pageCount: 1,
+    });
+
+    const { server, baseUrl } = await startServer(app);
+    const aiServerInfo = await startJsonServer((request, response) => {
+      if (request.url === '/api/chat') {
+        let rawBody = '';
+        request.on('data', (chunk) => {
+          rawBody += chunk;
+        });
+        request.on('end', () => {
+          const body = JSON.parse(rawBody);
+          assert.equal(body.model, 'qa-ollama');
+          assert.equal(body.stream, false);
+          assert.equal(body.messages[0]?.role, 'system');
+          assert.equal(body.messages[1]?.role, 'user');
+          assert.match(body.messages[1]?.content || '', /Pergunta: Quem foi nomeada para o cargo\?/);
+          response.writeHead(200, { 'content-type': 'application/json' });
+          response.end(JSON.stringify({
+            message: {
+              content: 'Maria de Souza foi nomeada para o cargo de diretora administrativa.',
+            },
+          }));
+        });
+        return;
+      }
+
+      response.writeHead(404, { 'content-type': 'application/json' });
+      response.end(JSON.stringify({ error: 'not found' }));
+    });
+
+    try {
+      await fetch(`${baseUrl}/api/admin/settings`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          enrichmentBaseUrl: `${aiServerInfo.baseUrl}/api`,
+          enrichmentModel: 'qa-ollama',
+          enrichmentProvider: 'local',
+        }),
+      });
+
+      const response = await fetch(`${baseUrl}/api/documents/1/ask`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          question: 'Quem foi nomeada para o cargo?',
+        }),
+      });
+      const body = await response.json();
+
+      assert.equal(response.status, 200);
+      assert.equal(body.model, 'qa-ollama');
+      assert.match(body.answer, /Maria de Souza/);
     } finally {
       await new Promise((resolve, reject) => aiServerInfo.server.close((error) => (error ? reject(error) : resolve())));
       await new Promise((resolve, reject) => server.close((error) => (error ? reject(error) : resolve())));

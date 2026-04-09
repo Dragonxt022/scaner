@@ -5,7 +5,7 @@ const { Agent } = require('undici');
 const { defineModels } = require('../db/models');
 const config = require('../config');
 const { getAppSettings } = require('./app-settings');
-const { resolveAiEndpoint } = require('./ai-endpoint');
+const { resolveAiEndpoint, resolveModelEndpoints } = require('./ai-endpoint');
 const { analyzeTextQuality, cleanupExtractedText, formatIndexedText, sanitizeSnippet } = require('../utils/text');
 const {
   getDocumentById,
@@ -66,6 +66,32 @@ function buildSummaryRequestBody(mode, model, prompt) {
     };
   }
 
+  if (mode === 'ollama_chat') {
+    return {
+      model,
+      messages: [
+        { role: 'system', content: systemText },
+        { role: 'user', content: prompt },
+      ],
+      options: {
+        temperature: 0.2,
+      },
+      stream: false,
+    };
+  }
+
+  if (mode === 'ollama_generate') {
+    return {
+      model,
+      options: {
+        temperature: 0.2,
+      },
+      prompt,
+      stream: false,
+      system: systemText,
+    };
+  }
+
   return {
     messages: [
       { role: 'system', content: systemText },
@@ -74,39 +100,6 @@ function buildSummaryRequestBody(mode, model, prompt) {
     model,
     temperature: 0.2,
   };
-}
-
-function resolveModelEndpoints(baseUrl) {
-  const trimmed = String(baseUrl || '').trim().replace(/\/+$/, '');
-  if (!trimmed) {
-    return [];
-  }
-
-  const candidates = new Set();
-
-  try {
-    const url = new URL(trimmed);
-    const origin = url.origin;
-    const pathName = url.pathname.replace(/\/+$/, '');
-
-    if (pathName.endsWith('/chat/completions')) {
-      candidates.add(`${origin}${pathName.replace(/\/chat\/completions$/, '/models')}`);
-      candidates.add(`${origin}${pathName.replace(/\/api\/v1\/chat\/completions$/, '/api/v0/models')}`);
-    } else if (pathName.endsWith('/chat')) {
-      candidates.add(`${origin}${pathName.replace(/\/chat$/, '/models')}`);
-      candidates.add(`${origin}${pathName.replace(/\/api\/v1\/chat$/, '/api/v0/models')}`);
-    } else {
-      candidates.add(`${origin}${pathName}/models`);
-    }
-
-    candidates.add(`${origin}/v1/models`);
-    candidates.add(`${origin}/api/v1/models`);
-    candidates.add(`${origin}/api/v0/models`);
-  } catch {
-    candidates.add(`${trimmed}/models`);
-  }
-
-  return [...candidates];
 }
 
 function normalizeModelItems(payload) {
@@ -119,7 +112,7 @@ function normalizeModelItems(payload) {
         : [];
 
   return [...new Set(rawItems
-    .map((item) => item?.id || item?.modelKey || item?.name || item?.slug || '')
+    .map((item) => item?.id || item?.model || item?.modelKey || item?.name || item?.slug || '')
     .map((item) => String(item || '').trim())
     .filter(Boolean))];
 }

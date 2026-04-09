@@ -4,6 +4,7 @@ const { resolveAiEndpoint } = require('./ai-endpoint');
 function buildImageRequestBody(mode, model, safeImageDataUrl) {
   const systemText = 'Voce extrai texto visivel de imagens de documentos em portugues. Devolva somente o texto encontrado, limpo, sem markdown, sem comentarios e sem explicacoes.';
   const userText = 'Leia a imagem e devolva apenas o texto visivel mais relevante para busca documental. Preserve nomes, numeros, datas, processos, caixas, classificacoes e termos centrais.';
+  const ollamaImage = safeImageDataUrl.replace(/^data:image\/[a-z0-9.+-]+;base64,/i, '');
 
   if (mode === 'responses') {
     return {
@@ -43,6 +44,40 @@ function buildImageRequestBody(mode, model, safeImageDataUrl) {
       model,
       system_prompt: systemText,
       temperature: 0.1,
+    };
+  }
+
+  if (mode === 'ollama_chat') {
+    return {
+      model,
+      messages: [
+        {
+          content: systemText,
+          role: 'system',
+        },
+        {
+          content: userText,
+          images: [ollamaImage],
+          role: 'user',
+        },
+      ],
+      options: {
+        temperature: 0.1,
+      },
+      stream: false,
+    };
+  }
+
+  if (mode === 'ollama_generate') {
+    return {
+      images: [ollamaImage],
+      model,
+      options: {
+        temperature: 0.1,
+      },
+      prompt: userText,
+      stream: false,
+      system: systemText,
     };
   }
 

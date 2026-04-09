@@ -38,7 +38,7 @@
     </label>
     <label>
       <span>Base URL</span>
-      <input id="enrichmentBaseUrl" type="text" placeholder="http://127.0.0.1:11434/v1 ou https://api..." />
+      <input id="enrichmentBaseUrl" type="text" placeholder="Ollama: http://127.0.0.1:11434/api ou /v1" />
     </label>
     <label>
       <span>API key</span>
@@ -102,6 +102,9 @@
 
   <p class="config-note">
     Defina se a fila deve trabalhar com resumo, miniaturas ou ambos. As miniaturas sao gravadas em <strong>`data/media/previews`</strong>, e as imagens adicionais tambem entram na galeria do documento.
+  </p>
+  <p class="config-note">
+    Para Ollama, use <strong>`http://127.0.0.1:11434/api`</strong> para API nativa ou <strong>`http://127.0.0.1:11434/v1`</strong> para compatibilidade OpenAI.
   </p>
   <div class="config-section-grid compact-grid">
     <div>

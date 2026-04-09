@@ -236,6 +236,32 @@ function buildRequestBody(mode, model, prompt) {
     };
   }
 
+  if (mode === 'ollama_chat') {
+    return {
+      model,
+      messages: [
+        { role: 'system', content: systemText },
+        { role: 'user', content: prompt },
+      ],
+      options: {
+        temperature: 0.2,
+      },
+      stream: false,
+    };
+  }
+
+  if (mode === 'ollama_generate') {
+    return {
+      model,
+      options: {
+        temperature: 0.2,
+      },
+      prompt,
+      stream: false,
+      system: systemText,
+    };
+  }
+
   return {
     messages: [
       { role: 'system', content: systemText },

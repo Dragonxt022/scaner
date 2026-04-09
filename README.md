@@ -62,6 +62,34 @@ http://localhost:3000
 
 Ao iniciar, o sistema sincroniza automaticamente o catalogo do `pdf-links.json` para o banco local, salvo se `SYNC_CATALOG_ON_BOOT=false`.
 
+### 2.1. Configurar IA local com Ollama
+
+O enriquecimento e as perguntas sobre documentos agora aceitam Ollama em dois modos:
+
+- API nativa: `http://127.0.0.1:11434/api`
+- Compatibilidade OpenAI: `http://127.0.0.1:11434/v1`
+
+Exemplo de uso:
+
+1. Rode o Ollama localmente
+2. Baixe um modelo, por exemplo:
+
+```powershell
+ollama pull qwen2.5:7b
+```
+
+3. Na tela de configuracao da aplicacao, informe:
+
+- `Provider`: `IA local`
+- `Modelo`: `qwen2.5:7b`
+- `Base URL`: `http://127.0.0.1:11434/api`
+
+Observacoes:
+
+- o botao `Carregar modelos` consulta `api/tags` quando a base for Ollama nativo;
+- perguntas e resumos usam `api/chat` automaticamente quando a base for `.../api`;
+- se voce preferir a camada compativel com OpenAI, use `http://127.0.0.1:11434/v1`.
+
 ### 3. Sincronizar o catalogo manualmente
 
 Use quando quiser recarregar o banco local a partir do inventario:
