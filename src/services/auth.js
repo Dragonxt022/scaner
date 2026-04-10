@@ -93,6 +93,22 @@ function ensureAuthSchema() {
     )
   `);
 
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS access_requests (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      cpf TEXT NOT NULL,
+      user_id INTEGER,
+      requested_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      requested_by_ip TEXT,
+      status TEXT NOT NULL DEFAULT 'pending',
+      full_name TEXT,
+      admin_user_id INTEGER,
+      responded_at TEXT,
+      FOREIGN KEY(user_id) REFERENCES app_users(id) ON DELETE SET NULL,
+      FOREIGN KEY(admin_user_id) REFERENCES app_users(id) ON DELETE SET NULL
+    )
+  `);
+
   const columns = db.prepare(`PRAGMA table_info(app_users)`).all().map((column) => column.name);
   const addColumn = (name, sql) => {
     if (!columns.includes(name)) {
@@ -541,6 +557,19 @@ function listPasswordResetRequests(limit = 100) {
   `).all(Math.max(1, Math.min(500, Number(limit || 100))));
 }
 
+function listAccessRequests(limit = 100) {
+  ensureAuthSchema();
+  return getDb().prepare(`
+    SELECT
+      r.*,
+      a.full_name AS admin_full_name
+    FROM access_requests r
+    LEFT JOIN app_users a ON a.id = r.admin_user_id
+    ORDER BY datetime(r.requested_at) DESC, r.id DESC
+    LIMIT ?
+  `).all(Math.max(1, Math.min(500, Number(limit || 100))));
+}
+
 function requestPasswordReset(cpf, requestIp) {
   ensureAuthSchema();
   const user = getUserByCpf(cpf);
@@ -554,6 +583,145 @@ function requestPasswordReset(cpf, requestIp) {
   `).run(user.id, String(requestIp || '').slice(0, 120));
 
   return { ok: true };
+}
+
+function requestAccess(cpf, requestIp, fullName, password) {
+  ensureAuthSchema();
+  const normalizedCpf = normalizeCpf(cpf);
+  if (normalizedCpf.length !== 11) {
+    throw new Error('Informe um CPF valido.');
+  }
+
+  let user = getUserByCpf(normalizedCpf);
+  if (user) {
+    const normalizedName = String(fullName || '').trim();
+    if (!user.is_active && normalizedName.length >= 3 && normalizedName !== user.full_name) {
+      getDb().prepare(`
+        UPDATE app_users
+        SET full_name = ?, updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+      `).run(normalizedName, user.id);
+      user = getUserById(user.id);
+    }
+
+    if (!user.is_active && password) {
+      const passwordCheck = validatePasswordStrength(password);
+      if (!passwordCheck.ok) {
+        throw new Error(passwordCheck.error);
+      }
+
+      getDb().prepare(`
+        UPDATE app_users
+        SET password_hash = ?, must_change_password = 0, password_changed_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+      `).run(createPasswordHash(password), user.id);
+      user = getUserById(user.id);
+    }
+  } else {
+    const normalizedName = String(fullName || '').trim();
+    if (normalizedName.length < 3) {
+      throw new Error('Informe o nome completo do usuario.');
+    }
+
+    const passwordCheck = validatePasswordStrength(password);
+    if (!passwordCheck.ok) {
+      throw new Error(passwordCheck.error);
+    }
+
+    user = createUser({
+      cpf: normalizedCpf,
+      fullName: normalizedName,
+      password,
+      isActive: false,
+      mustChangePassword: false,
+    });
+  }
+
+  getDb().prepare(`
+    INSERT INTO access_requests (cpf, user_id, requested_by_ip, status, requested_at, full_name)
+    VALUES (?, ?, ?, 'pending', CURRENT_TIMESTAMP, ?)
+  `).run(
+    normalizedCpf,
+    user ? user.id : null,
+    String(requestIp || '').slice(0, 120),
+    user ? user.full_name : null,
+  );
+
+  return { ok: true };
+}
+
+function approveAccessRequest(requestId, adminUserId) {
+  ensureAuthSchema();
+  const requestRow = getDb().prepare(`
+    SELECT *
+    FROM access_requests
+    WHERE id = ?
+  `).get(Number(requestId) || 0);
+
+  if (!requestRow) {
+    throw new Error('Solicitacao de acesso nao encontrada.');
+  }
+  if (requestRow.status !== 'pending') {
+    throw new Error('Esta solicitacao ja foi processada.');
+  }
+
+  if (requestRow.user_id) {
+    const user = getUserById(requestRow.user_id);
+    if (!user) {
+      throw new Error('Usuario relacionado a esta solicitacao nao encontrado.');
+    }
+    if (!user.is_active) {
+      getDb().prepare(`
+        UPDATE app_users
+        SET
+          is_active = 1,
+          must_change_password = 0,
+          password_changed_at = COALESCE(password_changed_at, CURRENT_TIMESTAMP),
+          updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+      `).run(user.id);
+    }
+  }
+
+  getDb().prepare(`
+    UPDATE access_requests
+    SET status = 'approved', admin_user_id = ?, responded_at = CURRENT_TIMESTAMP
+    WHERE id = ?
+  `).run(adminUserId || null, requestRow.id);
+
+  return getDb().prepare(`
+    SELECT *
+    FROM access_requests
+    WHERE id = ?
+  `).get(requestRow.id);
+}
+
+function rejectAccessRequest(requestId, adminUserId) {
+  ensureAuthSchema();
+  const requestRow = getDb().prepare(`
+    SELECT *
+    FROM access_requests
+    WHERE id = ?
+  `).get(Number(requestId) || 0);
+
+  if (!requestRow) {
+    throw new Error('Solicitacao de acesso nao encontrada.');
+  }
+  if (requestRow.status !== 'pending') {
+    throw new Error('Esta solicitacao ja foi processada.');
+  }
+
+  getDb().prepare(`
+    UPDATE access_requests
+    SET status = 'rejected', admin_user_id = ?, responded_at = CURRENT_TIMESTAMP
+    WHERE id = ?
+  `).run(adminUserId || null, requestRow.id);
+
+  return getDb().prepare(`
+    SELECT *
+    FROM access_requests
+    WHERE id = ?
+  `).get(requestRow.id);
 }
 
 function issuePasswordResetCode(requestId, adminUserId) {
@@ -671,11 +839,15 @@ module.exports = {
   getSessionUserByToken,
   getUserByCpf,
   getUserById,
+  approveAccessRequest,
   issuePasswordResetCode,
+  listAccessRequests,
   listPasswordResetRequests,
   listUsers,
   normalizeCpf,
   parseCookies,
+  rejectAccessRequest,
+  requestAccess,
   requestPasswordReset,
   resetPasswordWithCode,
   serializePublicUser,

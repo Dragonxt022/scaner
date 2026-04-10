@@ -1,30 +1,18 @@
-<article class="config-card">
+<article class="config-card config-card-soft">
   <div class="section-head">
     <div>
       <p class="panel-kicker">IA e midia</p>
-      <h3>Resumos e miniaturas do acervo</h3>
+      <h3>Configuracao de provider e modelo</h3>
     </div>
     <div class="config-actions">
       <button id="enrichmentSave" type="button">Salvar configuracoes</button>
       <button id="enrichmentLoadModels" type="button">Carregar modelos</button>
-      <button id="enrichmentRun" class="primary-button" type="button">Iniciar fila</button>
-      <button id="enrichmentStop" class="ghost-button danger-button" type="button">Parar fila</button>
     </div>
   </div>
 
   <div class="config-module-intro">
-    <strong>Resumo sem perder controle operacional</strong>
-    <p>Selecione provider, modelo e escopo do processo para enriquecer o acervo com resumos e imagens leves de apoio.</p>
-  </div>
-
-  <div class="stats-grid" id="enrichmentStats"></div>
-  <div class="stats-grid">
-    <article class="overview-stat"><span>Status</span><strong id="enrichmentStatusMode">Parado</strong></article>
-    <article class="overview-stat"><span>Processados</span><strong id="enrichmentProcessedTotal">0</strong></article>
-    <article class="overview-stat"><span>Erros</span><strong id="enrichmentErrorTotal">0</strong></article>
-    <article class="overview-stat"><span>Media por item</span><strong id="enrichmentAvgTime">--</strong></article>
-    <article class="overview-stat"><span>Gargalo</span><strong id="enrichmentBottleneckStage">--</strong></article>
-    <article class="overview-stat"><span>Ultimo item</span><strong id="enrichmentLastItemTime">--</strong></article>
+    <strong>Modelo, escopo e politica de processamento</strong>
+    <p>Defina provider, credenciais, batch e o que deve ser gerado em cada documento antes de iniciar a fila.</p>
   </div>
 
   <div class="form-grid">
@@ -105,22 +93,5 @@
     </label>
   </div>
 
-  <p class="config-note">
-    Defina se a fila deve trabalhar com resumo, miniaturas ou ambos. As miniaturas sao gravadas em <strong>`data/media/previews`</strong>, e as imagens adicionais tambem entram na galeria do documento.
-  </p>
-  <p class="config-note">
-    Para Ollama, use <strong>`http://127.0.0.1:11434/api`</strong> para API nativa ou <strong>`http://127.0.0.1:11434/v1`</strong> para compatibilidade OpenAI.
-  </p>
-  <div class="config-section-grid compact-grid">
-    <div>
-      <h4 class="config-subtitle">Documento em enriquecimento</h4>
-      <div id="enrichmentCurrentItem" class="stack-list"></div>
-    </div>
-    <div>
-      <h4 class="config-subtitle">Ultimo enriquecido</h4>
-      <div id="enrichmentLastItemCard" class="stack-list"></div>
-    </div>
-  </div>
-  <p class="config-note" id="enrichmentFeedback">Aguardando configuracao.</p>
-  <div id="enrichmentResults" class="stack-list"></div>
+  <p class="config-note">Para Ollama, use <strong>`http://127.0.0.1:11434/api`</strong> para API nativa ou <strong>`http://127.0.0.1:11434/v1`</strong> para compatibilidade OpenAI.</p>
 </article>

@@ -1,0 +1,61 @@
+<article class="config-card config-card-soft">
+  <div class="section-head">
+    <div>
+      <p class="panel-kicker">Indexador</p>
+      <h3>Configuracoes do motor</h3>
+    </div>
+  </div>
+
+  <div class="config-module-intro">
+    <strong>Definicoes antes da execucao</strong>
+    <p>Escolha como o indexador deve ler os documentos, qual lote usar e quando ele pode insistir em itens com falha.</p>
+  </div>
+
+  <div class="form-grid">
+    <label>
+      <span>Lote por execucao</span>
+      <select id="batchLimit">
+        <option value="5">5</option>
+        <option value="10" selected>10</option>
+        <option value="25">25</option>
+        <option value="50">50</option>
+      </select>
+    </label>
+    <label>
+      <span>Modo de extracao</span>
+      <select id="indexMode">
+        <option value="hybrid" selected>Hibrido</option>
+        <option value="native">Texto nativo</option>
+        <option value="ocr">OCR forcado</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="config-section-grid compact-grid">
+    <label class="toggle-line strong-line">
+      <input id="retryFailuresToggle" type="checkbox" />
+      <span>Tentar novamente falhas anteriores</span>
+    </label>
+    <label class="toggle-line strong-line">
+      <input id="fullProcessToggle" type="checkbox" checked />
+      <span>Executar fluxo completo quando necessario</span>
+    </label>
+  </div>
+
+  <div class="stats-grid">
+    <article class="overview-stat">
+      <span>Uso recomendado</span>
+      <strong>10 a 25 docs</strong>
+    </article>
+    <article class="overview-stat">
+      <span>Modo seguro</span>
+      <strong>Hibrido</strong>
+    </article>
+    <article class="overview-stat">
+      <span>Cenario OCR</span>
+      <strong>Falhas recorrentes</strong>
+    </article>
+  </div>
+
+  <p class="config-note">Essas definicoes sao lidas quando a fila for iniciada na pagina de uso do indexador.</p>
+</article>

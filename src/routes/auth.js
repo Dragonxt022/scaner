@@ -8,6 +8,7 @@ const {
   createSession,
   destroySessionByToken,
   normalizeCpf,
+  requestAccess,
   requestPasswordReset,
   resetPasswordWithCode,
   serializePublicUser,
@@ -119,6 +120,23 @@ router.post('/request-password-reset', (request, response) => {
     ok: true,
     message: 'Solicitacao registrada. Procure um administrador para obter o codigo temporario.',
   });
+});
+
+router.post('/request-access', (request, response) => {
+  try {
+    requestAccess(
+      request.body?.cpf,
+      request.socket?.remoteAddress || '',
+      request.body?.fullName,
+      request.body?.password,
+    );
+    response.json({
+      ok: true,
+      message: 'Solicitacao de acesso registrada. Aguarde aprovacao administrativa.',
+    });
+  } catch (error) {
+    response.status(400).json({ error: error.message });
+  }
 });
 
 router.post('/reset-password', (request, response) => {

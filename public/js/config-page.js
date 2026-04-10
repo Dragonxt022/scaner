@@ -157,6 +157,18 @@
     return text || fallback;
   }
 
+  function normalizeCpf(value) {
+    return String(value || '').replace(/\D/g, '').slice(0, 11);
+  }
+
+  function formatCpf(value) {
+    const digits = normalizeCpf(value);
+    return digits
+      .replace(/^(\d{3})(\d)/, '$1.$2')
+      .replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
+      .replace(/\.(\d{3})(\d)/, '.$1-$2');
+  }
+
   function escapeHtml(value) {
     return String(value ?? '')
       .replaceAll('&', '&amp;')
@@ -298,7 +310,7 @@
 
   function rerenderFilteredViews() {
     if (state.runtime?.users) renderUsers(state.runtime.users.items || []);
-    if (state.runtime?.passwordResetRequests) renderPasswordResetRequests(state.runtime.passwordResetRequests.items || []);
+    if (state.runtime?.accessRequests) renderAccessRequests(state.runtime.accessRequests.items || []);
     if (state.runtime?.accessLogs) renderAccessLogs(state.runtime.accessLogs.items || []);
     if (state.runtime?.searchLogs) renderSearchLogs(state.runtime.searchLogs.items || []);
     if (state.runtime?.localLibrary) renderLocalLibrary(state.runtime.localLibrary.items || [], state.runtime.localLibrary.root || '');
@@ -731,7 +743,7 @@
     });
   }
 
-  function renderPasswordResetRequests(items) {
+  function renderAccessRequests(items) {
     if (!elements.passwordResetRequestList) return;
     const filtered = items.filter((item) => matchesSearch(
       item,
@@ -741,32 +753,33 @@
     renderTable({
       container: elements.passwordResetRequestList,
       columns: [
-        { label: 'Usuario' },
         { label: 'CPF' },
+        { label: 'Nome' },
         { label: 'Status' },
         { label: 'Solicitado em' },
         { label: 'IP' },
-        { label: 'Codigo' },
         { label: 'Admin' },
         { label: 'Acoes', className: 'table-col-actions' },
       ],
       rows: filtered.map((item) => [
-        { html: escapeHtml(safe(item.full_name)) },
         { html: escapeHtml(safe(item.cpf)) },
+        { html: escapeHtml(safe(item.full_name || '--')) },
         { html: escapeHtml(safe(item.status)) },
         { html: escapeHtml(formatTimestamp(item.requested_at)) },
         { html: escapeHtml(safe(item.requested_by_ip || '--')) },
-        { html: escapeHtml(safe(item.issued_code_preview || '--')) },
         { html: escapeHtml(safe(item.admin_full_name || '--')) },
         {
-          html: item.status !== 'consumed'
-            ? `<button class="primary-button table-inline-button password-reset-issue-button" type="button" data-id="${escapeHtml(item.id)}">Emitir codigo</button>`
+          html: item.status === 'pending'
+            ? `
+              <button class="primary-button table-inline-button access-request-approve-button" type="button" data-id="${escapeHtml(item.id)}">Aprovar</button>
+              <button class="ghost-button table-inline-button access-request-reject-button" type="button" data-id="${escapeHtml(item.id)}">Rejeitar</button>
+            `
             : '--',
           className: 'table-col-actions',
         },
       ]),
       emptyTitle: 'Sem solicitacoes.',
-      emptyCopy: 'As solicitacoes de recuperacao de senha aparecem aqui.',
+      emptyCopy: 'As solicitacoes de acesso aparecem aqui.',
       compact: true,
     });
   }
@@ -1097,7 +1110,7 @@
       tasks.push(fetchJson('/api/admin/users').then((value) => ['users', value]));
     }
     if (elements.passwordResetRequestList) {
-      tasks.push(fetchJson('/api/admin/password-reset-requests?limit=80').then((value) => ['passwordResetRequests', value]));
+      tasks.push(fetchJson('/api/admin/access-requests?limit=80').then((value) => ['accessRequests', value]));
     }
     if (document.querySelector('#accessLogsList') || elements.auditSummaryStats) {
       tasks.push(fetchJson('/api/admin/activity/access-logs?limit=80').then((value) => ['accessLogs', value]));
@@ -1127,8 +1140,8 @@
     if (state.runtime.users) {
       renderUsers(state.runtime.users.items || []);
     }
-    if (state.runtime.passwordResetRequests) {
-      renderPasswordResetRequests(state.runtime.passwordResetRequests.items || []);
+    if (state.runtime.accessRequests) {
+      renderAccessRequests(state.runtime.accessRequests.items || []);
     }
     if (state.runtime.accessLogs) {
       renderAccessLogs(state.runtime.accessLogs.items || []);
@@ -1190,7 +1203,7 @@
       elements.enrichmentPreviewImagesEnabled.checked = Boolean(data.settings.enrichmentPreviewImagesEnabled);
       const enrichmentKey = getEnrichmentModelsKey();
       if (
-        currentPage === 'enrichment' &&
+        currentPage === 'enrichmentSettings' &&
         elements.enrichmentBaseUrl.value &&
         elements.enrichmentProvider.value !== 'disabled' &&
         state.enrichmentModelsKey !== enrichmentKey
@@ -1295,7 +1308,7 @@
   function fillUserForm(item) {
     elements.userEditId.value = String(item.id || '');
     elements.userFullName.value = item.full_name || '';
-    elements.userCpf.value = item.cpf || '';
+    elements.userCpf.value = formatCpf(item.cpf || '');
     elements.userRole.value = item.role || 'user';
     elements.userIsActive.value = item.is_active ? 'true' : 'false';
     elements.userMustChangePassword.value = item.must_change_password ? 'true' : 'false';
@@ -1320,10 +1333,24 @@
       toggle.dataset.bound = 'true';
       toggle.addEventListener('click', () => {
         const collapsed = group.dataset.collapsed === 'true';
-        group.dataset.collapsed = collapsed ? 'false' : 'true';
-        toggle.setAttribute('aria-expanded', collapsed ? 'true' : 'false');
+        const scope = group.dataset.accordionScope || 'root';
+
+        document.querySelectorAll(`.config-nav-collapsible[data-accordion-scope="${scope}"]`).forEach((candidate) => {
+          const candidateToggle = candidate.querySelector('.config-nav-toggle');
+          const shouldOpen = candidate === group ? collapsed : false;
+          candidate.dataset.collapsed = shouldOpen ? 'false' : 'true';
+          if (candidateToggle) {
+            candidateToggle.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+          }
+        });
       });
     });
+
+    if (elements.userCpf) {
+      elements.userCpf.addEventListener('input', () => {
+        elements.userCpf.value = formatCpf(elements.userCpf.value);
+      });
+    }
 
     if (elements.logoutButton) {
       elements.logoutButton.addEventListener('click', async () => {
@@ -1537,7 +1564,7 @@
         elements.userManagementFeedback.textContent = 'Salvando usuario...';
         try {
           const payload = {
-            cpf: elements.userCpf.value,
+            cpf: normalizeCpf(elements.userCpf.value),
             fullName: elements.userFullName.value,
             isActive: elements.userIsActive.value === 'true',
             mustChangePassword: elements.userMustChangePassword.value === 'true',
@@ -1591,12 +1618,22 @@
 
     if (elements.passwordResetRequestList) {
       elements.passwordResetRequestList.addEventListener('click', async (event) => {
-        const issueButton = event.target.closest('.password-reset-issue-button');
-        if (!issueButton) return;
-        elements.userManagementFeedback.textContent = 'Emitindo codigo temporario...';
+        const approveButton = event.target.closest('.access-request-approve-button');
+        const rejectButton = event.target.closest('.access-request-reject-button');
+        if (!approveButton && !rejectButton) return;
+
+        const action = approveButton ? 'approve' : 'reject';
+        const requestId = (approveButton || rejectButton).dataset.id;
+        const feedbackMessage = action === 'approve'
+          ? 'Aprovando solicitacao...'
+          : 'Rejeitando solicitacao...';
+
+        elements.userManagementFeedback.textContent = feedbackMessage;
         try {
-          const result = await runPost(`/api/admin/password-reset-requests/${issueButton.dataset.id}/issue`, {});
-          elements.userManagementFeedback.textContent = `Codigo emitido: ${result.code}`;
+          await runPost(`/api/admin/access-requests/${requestId}/${action}`, {});
+          elements.userManagementFeedback.textContent = action === 'approve'
+            ? 'Solicitacao aprovada.'
+            : 'Solicitacao rejeitada.';
           await refreshRuntime();
         } catch (error) {
           elements.userManagementFeedback.textContent = error.message;
@@ -1876,7 +1913,7 @@
         statsTick = 0;
         refreshStatsAndSettings().catch(() => {});
       }
-    }, currentPage === 'indexing' ? 1000 : 2000);
+    }, currentPage.startsWith('indexing') ? 1000 : 2000);
   }
 
   window.addEventListener('beforeunload', () => {

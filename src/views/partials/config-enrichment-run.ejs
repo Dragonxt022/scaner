@@ -1,0 +1,40 @@
+<article class="config-card">
+  <div class="section-head">
+    <div>
+      <p class="panel-kicker">IA e midia</p>
+      <h3>Fila de enriquecimento</h3>
+    </div>
+    <div class="config-actions">
+      <button id="enrichmentRun" class="primary-button" type="button">Iniciar fila</button>
+      <button id="enrichmentStop" class="ghost-button danger-button" type="button">Parar fila</button>
+    </div>
+  </div>
+
+  <div class="config-module-intro">
+    <strong>Execucao do processamento inteligente</strong>
+    <p>Acompanhe status, itens atuais e resultados do enriquecimento usando a configuracao previamente definida.</p>
+  </div>
+
+  <div class="stats-grid" id="enrichmentStats"></div>
+  <div class="stats-grid">
+    <article class="overview-stat"><span>Status</span><strong id="enrichmentStatusMode">Parado</strong></article>
+    <article class="overview-stat"><span>Processados</span><strong id="enrichmentProcessedTotal">0</strong></article>
+    <article class="overview-stat"><span>Erros</span><strong id="enrichmentErrorTotal">0</strong></article>
+    <article class="overview-stat"><span>Media por item</span><strong id="enrichmentAvgTime">--</strong></article>
+    <article class="overview-stat"><span>Gargalo</span><strong id="enrichmentBottleneckStage">--</strong></article>
+    <article class="overview-stat"><span>Ultimo item</span><strong id="enrichmentLastItemTime">--</strong></article>
+  </div>
+
+  <div class="config-section-grid compact-grid">
+    <div>
+      <h4 class="config-subtitle">Documento em enriquecimento</h4>
+      <div id="enrichmentCurrentItem" class="stack-list"></div>
+    </div>
+    <div>
+      <h4 class="config-subtitle">Ultimo enriquecido</h4>
+      <div id="enrichmentLastItemCard" class="stack-list"></div>
+    </div>
+  </div>
+  <p class="config-note" id="enrichmentFeedback">Aguardando configuracao.</p>
+  <div id="enrichmentResults" class="stack-list"></div>
+</article>

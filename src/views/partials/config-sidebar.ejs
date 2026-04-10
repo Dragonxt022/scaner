@@ -1,21 +1,17 @@
+<%
+  const isUsersOpen = ['users', 'accessLogs', 'searchHistory'].includes(activeSection);
+  const isGestaoOpen = isUsersOpen;
+  const isIndexingOpen = ['indexingRun', 'indexingSettings'].includes(activeSection);
+  const isDownloadsOpen = ['downloadsRun', 'downloadsSettings'].includes(activeSection);
+  const isMaintenanceOpen = ['maintenanceRun', 'maintenanceSettings'].includes(activeSection);
+  const isEnrichmentOpen = ['enrichmentRun', 'enrichmentSettings'].includes(activeSection);
+  const isLocalLibraryOpen = ['localLibraryRun', 'localLibrarySettings'].includes(activeSection);
+%>
+
 <aside class="config-sidebar">
   <div class="config-sidebar-card">
     <div class="config-sidebar-profile">
-      <div class="config-sidebar-brand">
-        <span class="config-sidebar-brand-mark">AP</span>
-        <div>
-          <p class="panel-kicker">Painel administrativo</p>
-          <h3>Central de comando</h3>
-        </div>
-      </div>
-      <% if (currentUser) { %>
-        <p class="config-note">Perfil <strong><%= currentUser.role === 'admin' ? 'admin' : 'usuario' %></strong> • CPF <strong><%= currentUser.cpf %></strong></p>
-        <p class="config-sidebar-user"><%= currentUser.full_name %></p>
-      <% } %>
-    </div>
-
-    <div class="config-nav-group">
-      <p class="config-nav-title">Painel</p>
+      <p class="config-nav-title">Início</p>
       <nav class="config-nav">
         <a class="config-nav-button <%= activeSection === 'dashboard' ? 'active' : '' %>" href="/config">
           <span class="config-nav-icon" aria-hidden="true">
@@ -25,184 +21,158 @@
           </span>
           <span class="config-nav-copy">
             <strong>Dashboard</strong>
-            <small>Resumo operacional</small>
           </span>
         </a>
       </nav>
     </div>
 
-    <div class="config-nav-group config-nav-collapsible" data-collapsed="<%= !['users', 'settings', 'accessLogs', 'searchHistory'].includes(activeSection) %>">
-      <p class="config-nav-title">Governanca</p>
-      <button class="config-nav-toggle" type="button" aria-expanded="<%= ['users', 'settings', 'accessLogs', 'searchHistory'].includes(activeSection) ? 'true' : 'false' %>">
-        <span>Identidade, politicas e rastreio</span>
+    <div class="config-nav-group config-nav-collapsible" data-accordion-scope="root" data-collapsed="<%= isGestaoOpen ? 'false' : 'true' %>">
+      <div class="config-nav-group-head">
+        <p class="config-nav-title">Gestão</p>
+      </div>
+
+      <button class="config-nav-toggle" type="button" aria-expanded="<%= isGestaoOpen ? 'true' : 'false' %>">
+        <span class="config-nav-toggle-main">
+          <span class="config-nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M16 19a4 4 0 0 0-8 0"></path>
+              <circle cx="12" cy="11" r="3"></circle>
+              <path d="M5 19a7 7 0 0 1 14 0"></path>
+            </svg>
+          </span>
+          <span class="config-nav-copy">
+            <strong>Usuários</strong>
+          </span>
+        </span>
+        <span class="config-nav-toggle-caret" aria-hidden="true">v</span>
       </button>
-      <nav class="config-nav config-nav-panel">
-        <div class="config-nav-subgroup">
-          <p class="config-nav-subtitle">Seguranca e pessoas</p>
-          <a class="config-nav-button config-nav-button-sub <%= activeSection === 'users' ? 'active' : '' %>" href="/config/users">
-            <span class="config-nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
-                <path d="M16 19a4 4 0 0 0-8 0"></path>
-                <circle cx="12" cy="11" r="3"></circle>
-                <path d="M5 19a7 7 0 0 1 14 0"></path>
-              </svg>
-            </span>
-            <span class="config-nav-copy">
-              <strong>Usuarios</strong>
-              <small>Perfis e credenciais</small>
-            </span>
-          </a>
-        </div>
-        <div class="config-nav-subgroup">
-          <p class="config-nav-subtitle">Politicas do sistema</p>
-          <a class="config-nav-button config-nav-button-sub <%= activeSection === 'settings' ? 'active' : '' %>" href="/config/settings">
-            <span class="config-nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
-                <path d="M12 8.5A3.5 3.5 0 1 1 8.5 12 3.5 3.5 0 0 1 12 8.5Z"></path>
-                <path d="M19.4 15a1 1 0 0 0 .2 1.1l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1 1 0 0 0-1.1-.2 1 1 0 0 0-.6.9V20a2 2 0 1 1-4 0v-.2a1 1 0 0 0-.7-.9 1 1 0 0 0-1.1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1 1 0 0 0 .2-1.1 1 1 0 0 0-.9-.6H4a2 2 0 1 1 0-4h.2a1 1 0 0 0 .9-.7 1 1 0 0 0-.2-1.1l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1 1 0 0 0 1.1.2 1 1 0 0 0 .6-.9V4a2 2 0 1 1 4 0v.2a1 1 0 0 0 .7.9 1 1 0 0 0 1.1-.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1 1 0 0 0-.2 1.1 1 1 0 0 0 .9.6h.2a2 2 0 1 1 0 4h-.2a1 1 0 0 0-.9.7Z"></path>
-              </svg>
-            </span>
-            <span class="config-nav-copy">
-              <strong>Preferencias</strong>
-              <small>Parametros globais</small>
-            </span>
-          </a>
-        </div>
-        <div class="config-nav-subgroup">
-          <p class="config-nav-subtitle">Auditoria</p>
-          <a class="config-nav-button config-nav-button-sub <%= activeSection === 'accessLogs' ? 'active' : '' %>" href="/config/access-logs">
-            <span class="config-nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
-                <path d="M12 3l7 3v6c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6z"></path>
-                <path d="M9.5 12.5l1.8 1.8 3.7-4.1"></path>
-              </svg>
-            </span>
-            <span class="config-nav-copy">
-              <strong>Acessos</strong>
-              <small>Logins e navegacao</small>
-            </span>
-          </a>
-          <a class="config-nav-button config-nav-button-sub <%= activeSection === 'searchHistory' ? 'active' : '' %>" href="/config/search-history">
-            <span class="config-nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
-                <path d="M11 4a7 7 0 1 0 4.95 11.95L20 20"></path>
-                <path d="M8 11h6"></path>
-                <path d="M11 8v6"></path>
-              </svg>
-            </span>
-            <span class="config-nav-copy">
-              <strong>Pesquisas</strong>
-              <small>Historico de consultas</small>
-            </span>
-          </a>
-        </div>
+
+      <nav class="config-nav-panel">
+        <a class="config-nav-link-row <%= activeSection === 'users' ? 'active' : '' %>" href="/config/users">Todos</a>
+        <a class="config-nav-link-row <%= activeSection === 'users' ? 'active' : '' %>" href="/config/users#requests">Solicitações</a>
+        <a class="config-nav-link-row <%= activeSection === 'users' ? 'active' : '' %>" href="/config/users#userFullName">Cadastrar</a>
+        <a class="config-nav-link-row <%= activeSection === 'accessLogs' ? 'active' : '' %>" href="/config/access-logs">Acessos</a>
+        <a class="config-nav-link-row <%= activeSection === 'searchHistory' ? 'active' : '' %>" href="/config/search-history">Pesquisas</a>
       </nav>
     </div>
 
-    <div class="config-nav-group config-nav-collapsible" data-collapsed="<%= !['indexing', 'downloads', 'logs', 'maintenance', 'enrichment', 'localLibrary'].includes(activeSection) %>">
-      <p class="config-nav-title">Operacao</p>
-      <button class="config-nav-toggle" type="button" aria-expanded="<%= ['indexing', 'downloads', 'logs', 'maintenance', 'enrichment', 'localLibrary'].includes(activeSection) ? 'true' : 'false' %>">
-        <span>Filas, processamento e suporte</span>
-      </button>
-      <nav class="config-nav config-nav-panel">
-        <a class="config-nav-button" href="/monitor">
-          <span class="config-nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" focusable="false">
-              <path d="M4 18h16"></path>
-              <path d="M7 15l3-4 3 2 4-6"></path>
-            </svg>
-          </span>
-          <span class="config-nav-copy">
-            <strong>Monitor ao vivo</strong>
-            <small>Telemetria em tempo real</small>
-          </span>
-        </a>
-        <a class="config-nav-button <%= activeSection === 'indexing' ? 'active' : '' %>" href="/config/indexing">
-          <span class="config-nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" focusable="false">
-              <path d="M4 7h16"></path>
-              <path d="M4 12h10"></path>
-              <path d="M4 17h7"></path>
-              <path d="M17 10l3 2-3 2"></path>
-            </svg>
-          </span>
-          <span class="config-nav-copy">
-            <strong>Indexacao</strong>
-            <small>Fila e reprocessamento</small>
-          </span>
-        </a>
-        <a class="config-nav-button <%= activeSection === 'downloads' ? 'active' : '' %>" href="/config/downloads">
-          <span class="config-nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" focusable="false">
-              <path d="M12 4v10"></path>
-              <path d="M8 10l4 4 4-4"></path>
-              <path d="M5 19h14"></path>
-            </svg>
-          </span>
-          <span class="config-nav-copy">
-            <strong>Downloads</strong>
-            <small>Coleta e transferencia</small>
-          </span>
-        </a>
-        <a class="config-nav-button <%= activeSection === 'logs' ? 'active' : '' %>" href="/config/logs">
-          <span class="config-nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" focusable="false">
-              <path d="M8 6h11"></path>
-              <path d="M8 12h11"></path>
-              <path d="M8 18h11"></path>
-              <path d="M5 6h.01"></path>
-              <path d="M5 12h.01"></path>
-              <path d="M5 18h.01"></path>
-            </svg>
-          </span>
-          <span class="config-nav-copy">
-            <strong>Logs e erros</strong>
-            <small>Diagnostico operacional</small>
-          </span>
-        </a>
-        <a class="config-nav-button <%= activeSection === 'maintenance' ? 'active' : '' %>" href="/config/maintenance">
-          <span class="config-nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" focusable="false">
-              <path d="M14 7l3-3 3 3-3 3"></path>
-              <path d="M4 20l7-7"></path>
-              <path d="M10 14l4 4"></path>
-            </svg>
-          </span>
-          <span class="config-nav-copy">
-            <strong>Tratamento</strong>
-            <small>Higienizacao e correcoes</small>
-          </span>
-        </a>
-        <a class="config-nav-button <%= activeSection === 'enrichment' ? 'active' : '' %>" href="/config/enrichment">
-          <span class="config-nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" focusable="false">
-              <path d="M12 3l1.9 4.6L19 9.5l-3.8 3.3 1.1 5-4.3-2.6-4.3 2.6 1.1-5L5 9.5l5.1-1.9z"></path>
-            </svg>
-          </span>
-          <span class="config-nav-copy">
-            <strong>IA e midia</strong>
-            <small>Resumos e miniaturas</small>
-          </span>
-        </a>
-        <a class="config-nav-button <%= activeSection === 'localLibrary' ? 'active' : '' %>" href="/config/local-library">
-          <span class="config-nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" focusable="false">
-              <path d="M4 7h16"></path>
-              <path d="M4 12h16"></path>
-              <path d="M4 17h16"></path>
-              <path d="M8 4v16"></path>
-            </svg>
-          </span>
-          <span class="config-nav-copy">
-            <strong>Biblioteca local</strong>
-            <small>Pasta de ingestao</small>
-          </span>
-        </a>
-      </nav>
-    </div>
+    <nav class="config-nav">
 
-    <div class="config-actions">
-      <a class="detail-action-secondary config-sidebar-cta" href="/">Ir para busca</a>
-    </div>
+      <div class="config-nav-tool config-nav-collapsible" data-accordion-scope="root" data-collapsed="<%= isIndexingOpen ? 'false' : 'true' %>">
+        <button class="config-nav-toggle" type="button" aria-expanded="<%= isIndexingOpen ? 'true' : 'false' %>">
+          <span class="config-nav-toggle-main">
+            <span class="config-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M4 7h16"></path>
+                <path d="M4 12h10"></path>
+                <path d="M4 17h7"></path>
+                <path d="M17 10l3 2-3 2"></path>
+              </svg>
+            </span>
+            <span class="config-nav-copy">
+              <strong>Indexador</strong>
+            </span>
+          </span>
+          <span class="config-nav-toggle-caret" aria-hidden="true">v</span>
+        </button>
+        <nav class="config-nav-panel config-nav-subpanel">
+          <a class="config-nav-link-row <%= activeSection === 'indexingRun' ? 'active' : '' %>" href="/config/indexing/run">Uso</a>
+          <a class="config-nav-link-row <%= activeSection === 'indexingSettings' ? 'active' : '' %>" href="/config/indexing/settings">Configuração</a>
+        </nav>
+      </div>
+
+      <div class="config-nav-tool config-nav-collapsible" data-accordion-scope="root" data-collapsed="<%= isDownloadsOpen ? 'false' : 'true' %>">
+        <button class="config-nav-toggle" type="button" aria-expanded="<%= isDownloadsOpen ? 'true' : 'false' %>">
+          <span class="config-nav-toggle-main">
+            <span class="config-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M12 4v10"></path>
+                <path d="M8 10l4 4 4-4"></path>
+                <path d="M5 19h14"></path>
+              </svg>
+            </span>
+            <span class="config-nav-copy">
+              <strong>Downloads</strong>
+            </span>
+          </span>
+          <span class="config-nav-toggle-caret" aria-hidden="true">v</span>
+        </button>
+        <nav class="config-nav-panel config-nav-subpanel">
+          <a class="config-nav-link-row <%= activeSection === 'downloadsRun' ? 'active' : '' %>" href="/config/downloads/run">Uso</a>
+          <a class="config-nav-link-row <%= activeSection === 'downloadsSettings' ? 'active' : '' %>" href="/config/downloads/settings">Configuração</a>
+        </nav>
+      </div>
+
+      <a class="config-nav-link-row <%= activeSection === 'logs' ? 'active' : '' %>" href="/config/logs">Logs</a>
+
+      <div class="config-nav-tool config-nav-collapsible" data-accordion-scope="root" data-collapsed="<%= isMaintenanceOpen ? 'false' : 'true' %>">
+        <button class="config-nav-toggle" type="button" aria-expanded="<%= isMaintenanceOpen ? 'true' : 'false' %>">
+          <span class="config-nav-toggle-main">
+            <span class="config-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M14 7l3-3 3 3-3 3"></path>
+                <path d="M4 20l7-7"></path>
+                <path d="M10 14l4 4"></path>
+              </svg>
+            </span>
+            <span class="config-nav-copy">
+              <strong>Tratamento</strong>
+            </span>
+          </span>
+          <span class="config-nav-toggle-caret" aria-hidden="true">v</span>
+        </button>
+        <nav class="config-nav-panel config-nav-subpanel">
+          <a class="config-nav-link-row <%= activeSection === 'maintenanceRun' ? 'active' : '' %>" href="/config/maintenance/run">Uso</a>
+          <a class="config-nav-link-row <%= activeSection === 'maintenanceSettings' ? 'active' : '' %>" href="/config/maintenance/settings">Configuração</a>
+        </nav>
+      </div>
+
+      <div class="config-nav-tool config-nav-collapsible" data-accordion-scope="root" data-collapsed="<%= isEnrichmentOpen ? 'false' : 'true' %>">
+        <button class="config-nav-toggle" type="button" aria-expanded="<%= isEnrichmentOpen ? 'true' : 'false' %>">
+          <span class="config-nav-toggle-main">
+            <span class="config-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M12 3l1.9 4.6L19 9.5l-3.8 3.3 1.1 5-4.3-2.6-4.3 2.6 1.1-5L5 9.5l5.1-1.9z"></path>
+              </svg>
+            </span>
+            <span class="config-nav-copy">
+              <strong>IA e mídia</strong>
+            </span>
+          </span>
+          <span class="config-nav-toggle-caret" aria-hidden="true">v</span>
+        </button>
+        <nav class="config-nav-panel config-nav-subpanel">
+          <a class="config-nav-link-row <%= activeSection === 'enrichmentRun' ? 'active' : '' %>" href="/config/enrichment/run">Uso</a>
+          <a class="config-nav-link-row <%= activeSection === 'enrichmentSettings' ? 'active' : '' %>" href="/config/enrichment/settings">Configuração</a>
+        </nav>
+      </div>
+
+      <div class="config-nav-tool config-nav-collapsible" data-accordion-scope="root" data-collapsed="<%= isLocalLibraryOpen ? 'false' : 'true' %>">
+        <button class="config-nav-toggle" type="button" aria-expanded="<%= isLocalLibraryOpen ? 'true' : 'false' %>">
+          <span class="config-nav-toggle-main">
+            <span class="config-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M4 7h16"></path>
+                <path d="M4 12h16"></path>
+                <path d="M4 17h16"></path>
+                <path d="M8 4v16"></path>
+              </svg>
+            </span>
+            <span class="config-nav-copy">
+              <strong>Biblioteca</strong>
+            </span>
+          </span>
+          <span class="config-nav-toggle-caret" aria-hidden="true">v</span>
+        </button>
+        <nav class="config-nav-panel config-nav-subpanel">
+          <a class="config-nav-link-row <%= activeSection === 'localLibraryRun' ? 'active' : '' %>" href="/config/local-library/run">Uso</a>
+          <a class="config-nav-link-row <%= activeSection === 'localLibrarySettings' ? 'active' : '' %>" href="/config/local-library/settings">Configuração</a>
+        </nav>
+      </div>
+
+      <a class="config-nav-link-row <%= activeSection === 'settings' ? 'active' : '' %>" href="/config/settings">Preferências</a>
+      <a class="config-nav-link-row" href="/monitor">Monitor ao vivo</a>
+
+    </nav>
   </div>
 </aside>

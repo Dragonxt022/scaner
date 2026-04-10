@@ -25,44 +25,100 @@
       title: 'Parametros operacionais do sistema',
       copy: 'Centralize configuracoes de execucao, seguranca e comportamento do ambiente.',
     },
-    indexing: {
-      kicker: 'Operacao',
-      title: 'Fila de indexacao em tempo real',
-      copy: 'Veja lotes, documentos pendentes, gargalos, fila detalhada e eventos do indexador.',
+    indexingRun: {
+      kicker: 'Indexador',
+      title: 'Operacao do indexador',
+      copy: 'Acompanhe fila, progresso, documentos em processamento e lotes recentes do motor de indexacao.',
     },
-    downloads: {
-      kicker: 'Operacao',
-      title: 'Downloads e transferencia de acervo',
-      copy: 'Monitore o fluxo de arquivos, concorrencia, progresso total e pendencias da coleta.',
+    indexingSettings: {
+      kicker: 'Indexador',
+      title: 'Configuracao do indexador',
+      copy: 'Defina lote, modo de extracao e politicas de reprocesso antes de iniciar a fila.',
+    },
+    downloadsRun: {
+      kicker: 'Downloads',
+      title: 'Operacao de downloads',
+      copy: 'Monitore o fluxo de arquivos, progresso total, falhas e pendencias da coleta.',
+    },
+    downloadsSettings: {
+      kicker: 'Downloads',
+      title: 'Configuracao de downloads',
+      copy: 'Ajuste concorrencia, timeout, tentativas e politica de sobrescrita da fila.',
     },
     logs: {
       kicker: 'Suporte tecnico',
       title: 'Logs tecnicos e falhas operacionais',
       copy: 'Consolide diagnosticos, eventos recentes, erros de lote e sinais do motor interno.',
     },
-    maintenance: {
+    maintenanceRun: {
       kicker: 'Tratamento',
-      title: 'Higienizacao e manutencao do acervo',
-      copy: 'Revise candidatos a correcao, execute manutencoes e trate inconsistencias de processamento.',
+      title: 'Operacao de tratamento',
+      copy: 'Revise candidatos, gere previews e execute reprocessos imediatos sobre o acervo.',
     },
-    enrichment: {
+    maintenanceSettings: {
+      kicker: 'Tratamento',
+      title: 'Configuracao de tratamento',
+      copy: 'Defina estrategias, limites e padroes de limpeza para o fluxo de recuperacao do acervo.',
+    },
+    enrichmentRun: {
       kicker: 'IA e midia',
-      title: 'Enriquecimento de conteudo',
-      copy: 'Controle resumos, miniaturas, modelos e rotinas de enriquecimento do acervo.',
+      title: 'Operacao de enriquecimento',
+      copy: 'Controle a execucao da fila de resumos e miniaturas e acompanhe o que esta sendo processado.',
     },
-    localLibrary: {
+    enrichmentSettings: {
+      kicker: 'IA e midia',
+      title: 'Configuracao de enriquecimento',
+      copy: 'Defina provider, modelo, batch e politicas de resumo e imagens para o processo de IA.',
+    },
+    localLibraryRun: {
       kicker: 'Acervo local',
-      title: 'Biblioteca de ingestao local',
-      copy: 'Sincronize arquivos colocados em data/local-acervo e alimente o acervo com links servidos pelo proprio sistema.',
+      title: 'Operacao da biblioteca local',
+      copy: 'Monitore arquivos detectados, estado da pasta local e resultados da sincronizacao.',
+    },
+    localLibrarySettings: {
+      kicker: 'Acervo local',
+      title: 'Configuracao da biblioteca local',
+      copy: 'Defina o comportamento da ingestao local e como a sincronizacao automatica deve agir no servidor.',
     },
   };
   const currentSection = sectionMeta[activeSection] || sectionMeta.dashboard;
 %>
 <%- include('partials/head', { pageTitle, bodyPage: `config-${activeSection}` }) %>
 <div class="shell">
-  <%- include('partials/brand-header', { href: '/', currentUser, canAccessAdmin: true }) %>
-
   <main class="config-shell config-page">
+    <header class="admin-topbar">
+      <div class="admin-topbar-start">
+        <button class="admin-menu-button" type="button" aria-label="Abrir menu" title="Menu em evolucao">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <a class="admin-brand" href="/">
+          <span class="admin-brand-wordmark" aria-hidden="true">
+            <span class="brand-blue">A</span><span class="brand-red">c</span><span class="brand-yellow">e</span><span class="brand-blue">r</span><span class="brand-green">v</span><span class="brand-red">o</span>
+          </span>
+        </a>
+      </div>
+
+      <div class="admin-topbar-end">
+        <button class="admin-notification-button" type="button" aria-label="Notificacoes">
+          <img src="/bell-solid-108.png" alt="" />
+        </button>
+
+        <% if (currentUser) { %>
+          <div class="admin-user-badge">
+            <div class="admin-user-copy">
+              <strong><%= currentUser.full_name %></strong>
+              <span>Cidade</span>
+            </div>
+            <span class="admin-user-avatar"><%= String(currentUser.full_name || 'A').trim().charAt(0).toUpperCase() || 'A' %></span>
+          </div>
+        <% } %>
+
+        <button id="logoutButton" class="ghost-button admin-logout-button" type="button">Sair</button>
+      </div>
+    </header>
+
     <section class="config-admin-layout hidden" id="configPanel">
       <%- include('partials/config-sidebar', { activeSection, currentUser }) %>
 
@@ -84,12 +140,20 @@
             <%- include('partials/config-settings') %>
           <% } %>
 
-          <% if (activeSection === 'indexing') { %>
-            <%- include('partials/config-indexing') %>
+          <% if (activeSection === 'indexingRun') { %>
+            <%- include('partials/config-indexing-run') %>
           <% } %>
 
-          <% if (activeSection === 'downloads') { %>
-            <%- include('partials/config-downloads') %>
+          <% if (activeSection === 'indexingSettings') { %>
+            <%- include('partials/config-indexing-settings') %>
+          <% } %>
+
+          <% if (activeSection === 'downloadsRun') { %>
+            <%- include('partials/config-downloads-run') %>
+          <% } %>
+
+          <% if (activeSection === 'downloadsSettings') { %>
+            <%- include('partials/config-downloads-settings') %>
           <% } %>
 
           <% if (activeSection === 'logs') { %>
@@ -104,16 +168,28 @@
             <%- include('partials/config-search-history') %>
           <% } %>
 
-          <% if (activeSection === 'maintenance') { %>
-            <%- include('partials/config-maintenance') %>
+          <% if (activeSection === 'maintenanceRun') { %>
+            <%- include('partials/config-maintenance-run') %>
           <% } %>
 
-          <% if (activeSection === 'enrichment') { %>
-            <%- include('partials/config-enrichment') %>
+          <% if (activeSection === 'maintenanceSettings') { %>
+            <%- include('partials/config-maintenance-settings') %>
           <% } %>
 
-          <% if (activeSection === 'localLibrary') { %>
-            <%- include('partials/config-local-library') %>
+          <% if (activeSection === 'enrichmentRun') { %>
+            <%- include('partials/config-enrichment-run') %>
+          <% } %>
+
+          <% if (activeSection === 'enrichmentSettings') { %>
+            <%- include('partials/config-enrichment-settings') %>
+          <% } %>
+
+          <% if (activeSection === 'localLibraryRun') { %>
+            <%- include('partials/config-local-library-run') %>
+          <% } %>
+
+          <% if (activeSection === 'localLibrarySettings') { %>
+            <%- include('partials/config-local-library-settings') %>
           <% } %>
 
           <% if (activeSection === 'users') { %>

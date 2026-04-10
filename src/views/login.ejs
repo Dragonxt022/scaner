@@ -1,57 +1,73 @@
 <%- include('partials/head', { pageTitle, bodyClass: 'login-page' }) %>
 <div class="shell login-shell">
-  <main class="login-layout login-layout-wide">
-    <section class="login-card">
-      <p class="hero-kicker">Acesso seguro</p>
-      <h1>Entrar no Acervo</h1>
-      <p class="detail-hero-copy">Usuarios autenticados acessam a pesquisa. Administradores acessam tambem o painel de configuracoes.</p>
+  <main class="login-layout login-layout-auth">
+    <section class="login-card auth-stage-card">
+      <div class="auth-brand-lockup" aria-label="Acervo Publico">
+        <p class="auth-brand-kicker">Pesquisa documental</p>
+        <div class="auth-brand-wordmark" aria-hidden="true">
+          <span class="brand-blue">A</span><span class="brand-red">c</span><span class="brand-yellow">e</span><span class="brand-blue">r</span><span class="brand-green">v</span><span class="brand-red">o</span>
+        </div>
+        <p class="auth-brand-subtitle">Publico</p>
+      </div>
 
-      <form id="loginForm" class="login-form">
-        <label>
-          <span>CPF</span>
-          <input id="loginCpf" type="text" inputmode="numeric" maxlength="14" placeholder="Somente numeros do CPF" autocomplete="username" />
-        </label>
-        <label>
-          <span>Senha</span>
-          <input id="loginPassword" type="password" placeholder="Sua senha" autocomplete="current-password" />
-        </label>
-        <button class="primary-button login-submit" type="submit">Entrar</button>
-      </form>
+      <section class="auth-screen active" data-auth-screen="login">
+        <div class="auth-screen-head">
+          <h3>ENTRAR</h3>
+          <p class="detail-hero-copy">Digite suas credenciais para te acesso ao sistema</p>
+        </div>
 
-      <p class="config-note">Regra de senha: minimo 6 caracteres com 1 letra maiuscula, 1 numero e 1 caractere especial.</p>
-      <p id="loginFeedback" class="detail-inline-feedback"></p>
-    </section>
+        <form id="loginForm" class="login-form">
+          <input id="loginCpf" class="auth-input" type="text" inputmode="numeric" maxlength="14" placeholder="Seu C.P.F" autocomplete="username" />
+          <input id="loginPassword" class="auth-input" type="password" placeholder="Senha" autocomplete="current-password" />
+          <button class="primary-button login-submit auth-submit" type="submit">ACESSAR</button>
+          <label class="auth-remember-line">
+            <input type="checkbox" id="rememberLogin" />
+            <span>Permanecer conectado</span>
+          </label>
+        </form>
 
-    <section class="login-card">
-      <p class="hero-kicker">Recuperacao</p>
-      <h2 class="login-card-subtitle">Esqueci minha senha</h2>
-      <p class="detail-hero-copy">Solicite a recuperacao pelo CPF. Um administrador emitira um codigo temporario. Depois, use o codigo para definir a nova senha.</p>
+        <div class="auth-inline-links">
+          <button type="button" class="auth-link-button" data-auth-target="request">Solicitar acesso?</button>
+        </div>
 
-      <form id="passwordResetRequestForm" class="login-form">
-        <label>
-          <span>CPF para solicitacao</span>
-          <input id="resetRequestCpf" type="text" inputmode="numeric" maxlength="14" placeholder="CPF do usuario" />
-        </label>
-        <button class="ghost-button login-submit secondary-submit" type="submit">Solicitar recuperacao</button>
-      </form>
+        <p id="loginFeedback" class="detail-inline-feedback auth-feedback"></p>
+        <p class="auth-version">Versao 1.0 - beta</p>
+      </section>
 
-      <form id="passwordResetApplyForm" class="login-form recovery-form">
-        <label>
-          <span>CPF</span>
-          <input id="resetApplyCpf" type="text" inputmode="numeric" maxlength="14" placeholder="CPF do usuario" />
-        </label>
-        <label>
-          <span>Codigo temporario</span>
-          <input id="resetApplyCode" type="text" maxlength="20" placeholder="Codigo informado pelo admin" />
-        </label>
-        <label>
-          <span>Nova senha</span>
-          <input id="resetApplyPassword" type="password" autocomplete="new-password" />
-        </label>
-        <button class="primary-button login-submit" type="submit">Redefinir senha</button>
-      </form>
+      <section class="auth-screen" data-auth-screen="request" hidden>
+        <div class="auth-screen-head">
+          <h3>Solicitacao de acesso</h3>
+          <p class="detail-hero-copy">Informe CPF, nome completo e senha desejada para criar seu acesso.</p>
+        </div>
 
-      <p id="passwordResetFeedback" class="detail-inline-feedback"></p>
+        <form id="passwordResetRequestForm" class="login-form">
+          <input id="requestFullName" class="auth-input" type="text" placeholder="Nome completo" autocomplete="name" />
+          <input id="requestPassword" class="auth-input" type="password" placeholder="Senha desejada" autocomplete="new-password" />
+          <input id="resetRequestCpf" class="auth-input" type="text" inputmode="numeric" maxlength="14" placeholder="Seu C.P.F" />
+          <button class="ghost-button login-submit secondary-submit auth-submit" type="submit">ENVIAR SOLICITACAO</button>
+        </form>
+
+        <div class="auth-inline-links">
+          <button type="button" class="auth-link-button" data-auth-target="login">Voltar a pagina de login</button>
+        </div>
+
+        <p id="requestFeedback" class="detail-inline-feedback auth-feedback"></p>
+        <p class="auth-version">Versao 1.0 - beta</p>
+      </section>
+
+      <section class="auth-screen auth-screen-sent" data-auth-screen="sent" hidden>
+        <div class="auth-screen-head auth-screen-head-sent">
+          <img class="auth-sent-illustration" src="/carta.png" alt="Carta enviada" />
+          <h3 class="auth-sent-title">Enviado!</h3>
+          <p class="detail-hero-copy auth-sent-copy">Sua solicitacao foi enviada, aguarde um administrador realizar aprovacao!</p>
+        </div>
+
+        <div class="auth-inline-links">
+          <button type="button" class="auth-link-button" data-auth-target="login">Voltar a pagina de login</button>
+        </div>
+
+        <p class="auth-version">Versao 1.0 - beta</p>
+      </section>
     </section>
   </main>
 </div>

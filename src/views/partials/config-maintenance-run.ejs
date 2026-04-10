@@ -1,0 +1,46 @@
+<article class="config-card">
+  <div class="section-head">
+    <div>
+      <p class="panel-kicker">Tratamento</p>
+      <h3>Limpeza e reprocessamento</h3>
+    </div>
+  </div>
+
+  <div class="config-module-intro">
+    <strong>Recuperacao orientada por sinais de qualidade</strong>
+    <p>Analise candidatos, limpe filas e execute o reprocesso imediato com base nas configuracoes definidas.</p>
+  </div>
+
+  <div class="stats-grid" id="maintenanceInsights"></div>
+
+  <div class="button-row">
+    <button id="maintenancePreview" class="ghost-button" type="button">Analisar fila</button>
+    <button id="maintenanceClear" class="ghost-button danger-button" type="button">Limpar e voltar para pendente</button>
+    <button id="maintenanceReprocess" class="primary-button" type="button">Limpar e reprocessar agora</button>
+  </div>
+
+  <p class="config-note" id="maintenanceFeedback">Aguardando analise.</p>
+  <div id="maintenanceCandidates" class="stack-list"></div>
+</article>
+
+<article class="config-card">
+  <div class="section-head">
+    <div>
+      <p class="panel-kicker">Saneamento textual</p>
+      <h3>Corrigir textos ja indexados</h3>
+    </div>
+  </div>
+
+  <div class="config-module-intro">
+    <strong>Ajuste fino do texto salvo</strong>
+    <p>Gere preview e aplique correcoes de legibilidade sobre textos salvos sem baixar o PDF novamente.</p>
+  </div>
+
+  <div class="button-row">
+    <button id="textCleanupPreview" class="ghost-button" type="button">Gerar preview</button>
+    <button id="textCleanupRun" class="primary-button" type="button">Aplicar limpeza no texto salvo</button>
+  </div>
+
+  <p class="config-note" id="textCleanupFeedback">Aguardando preview.</p>
+  <div id="textCleanupCandidates" class="stack-list"></div>
+</article>

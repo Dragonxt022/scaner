@@ -9,49 +9,8 @@
 
   <div class="config-module-intro">
     <strong>Coleta monitorada do acervo</strong>
-    <p>Controle concorrencia, tentativas e progresso total da fila. Os arquivos concluidos seguem para o espelho local e passam a servir a consulta interna.</p>
+    <p>Inicie, pare e acompanhe o progresso da fila. Os arquivos concluidos seguem para o espelho local e podem servir a consulta interna.</p>
   </div>
-
-  <div class="form-grid">
-    <label>
-      <span>Destino</span>
-      <input id="downloadDestinationDir" type="text" value="data/local-acervo" readonly />
-    </label>
-    <label>
-      <span>Simultaneos</span>
-      <select id="downloadConcurrency">
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3" selected>3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-        <option value="8">8</option>
-      </select>
-    </label>
-    <label>
-      <span>Tentativas</span>
-      <select id="downloadRetryCount">
-        <option value="0">0</option>
-        <option value="1">1</option>
-        <option value="2" selected>2</option>
-        <option value="3">3</option>
-      </select>
-    </label>
-    <label>
-      <span>Timeout</span>
-      <select id="downloadTimeoutMs">
-        <option value="15000">15s</option>
-        <option value="30000" selected>30s</option>
-        <option value="45000">45s</option>
-        <option value="60000">60s</option>
-      </select>
-    </label>
-  </div>
-
-  <label class="toggle-line strong-line">
-    <input id="downloadOverwrite" type="checkbox" />
-    <span>Sobrescrever existente</span>
-  </label>
 
   <div class="button-row">
     <button id="downloadStart" class="primary-button" type="button">Iniciar</button>
@@ -76,7 +35,6 @@
   </div>
 
   <p id="downloadActionFeedback" class="config-note">Sem acao recente.</p>
-  <p class="config-note">Os arquivos baixados entram automaticamente no acervo local e passam a abrir pelo link interno quando houver espelho salvo.</p>
   <p id="downloadProgressText" class="config-note">0 / 0</p>
   <p id="downloadInFlightCount" class="config-note">0 em andamento</p>
   <p id="downloadManifestPath" class="config-note">--</p>

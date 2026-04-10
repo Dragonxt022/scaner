@@ -1,44 +1,15 @@
 <article class="config-card">
   <div class="section-head">
     <div>
-      <p class="panel-kicker">Indexacao</p>
-      <h3>Fila de texto</h3>
+      <p class="panel-kicker">Indexador</p>
+      <h3>Fila em execucao</h3>
     </div>
   </div>
 
   <div class="config-module-intro">
     <strong>Operacao em lote com leitura continua</strong>
-    <p>Controle modo de extracao, reprocesso e fila detalhada para manter o acervo pesquisavel com previsibilidade.</p>
+    <p>Inicie, pare e acompanhe a fila detalhada do indexador com visibilidade de gargalos, documentos e lotes recentes.</p>
   </div>
-
-  <div class="form-grid">
-    <label>
-      <span>Lote</span>
-      <select id="batchLimit">
-        <option value="5">5</option>
-        <option value="10" selected>10</option>
-        <option value="25">25</option>
-        <option value="50">50</option>
-      </select>
-    </label>
-    <label>
-      <span>Modo</span>
-      <select id="indexMode">
-        <option value="hybrid" selected>Hibrido</option>
-        <option value="native">Texto nativo</option>
-        <option value="ocr">OCR forcado</option>
-      </select>
-    </label>
-  </div>
-
-  <label class="toggle-line strong-line">
-    <input id="retryFailuresToggle" type="checkbox" />
-    <span>Tentar novamente falhas</span>
-  </label>
-  <label class="toggle-line strong-line">
-    <input id="fullProcessToggle" type="checkbox" checked />
-    <span>Realizar todo o processo se necessario (resumo e imagens)</span>
-  </label>
 
   <div class="button-row">
     <button id="reindexStart" class="primary-button" type="button">Iniciar</button>

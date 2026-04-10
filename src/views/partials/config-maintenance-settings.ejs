@@ -1,19 +1,15 @@
-<article class="config-card">
+<article class="config-card config-card-soft">
   <div class="section-head">
     <div>
       <p class="panel-kicker">Tratamento</p>
-      <h3>Limpeza e reprocessamento</h3>
+      <h3>Configuracoes de limpeza</h3>
     </div>
   </div>
 
   <div class="config-module-intro">
-    <strong>Recuperacao orientada por sinais de qualidade</strong>
-    <p>Identifique documentos com texto ruim, falhas recorrentes ou metadados incompletos e envie novamente para o fluxo correto.</p>
+    <strong>Regras para analise e reprocesso</strong>
+    <p>Escolha fila alvo, limite, modo e politica de reset. As acoes da pagina de uso vao respeitar esses parametros.</p>
   </div>
-  <div class="stats-grid" id="maintenanceInsights"></div>
-  <p class="config-note">
-    Recomendacao atual: priorizar documentos com pouco texto para muitas paginas, erros recentes e itens indexados sem metodo registrado.
-  </p>
 
   <div class="form-grid maintenance-form">
     <label>
@@ -50,34 +46,9 @@
     </label>
   </div>
 
-  <div class="button-row">
-    <button id="maintenancePreview" class="ghost-button" type="button">Analisar fila</button>
-    <button id="maintenanceClear" class="ghost-button danger-button" type="button">Limpar e voltar para pendente</button>
-    <button id="maintenanceReprocess" class="primary-button" type="button">Limpar e reprocessar agora</button>
-  </div>
-
-  <p class="config-note" id="maintenanceFeedback">Aguardando analise.</p>
-  <div id="maintenanceCandidates" class="stack-list"></div>
-</article>
-
-<article class="config-card">
-  <div class="section-head">
-    <div>
-      <p class="panel-kicker">Saneamento textual</p>
-      <h3>Corrigir textos ja indexados</h3>
-    </div>
-  </div>
-  <div class="config-module-intro">
-    <strong>Ajuste fino do texto salvo</strong>
-    <p>Reescreva textos com baixa legibilidade sem repetir o download do PDF. Ideal para contracheques, folhas e OCR com ruido.</p>
-  </div>
-  <p class="config-note">
-    Use esta ferramenta quando o documento ja esta indexado, mas o texto salvo ficou ruim de ler. Ela reescreve o texto no banco e atualiza o indice de busca sem baixar o PDF de novo.
-  </p>
-
   <div class="form-grid maintenance-form">
     <label>
-      <span>Perfil</span>
+      <span>Perfil de texto</span>
       <select id="textCleanupStrategy">
         <option value="low-quality" selected>Baixa legibilidade</option>
         <option value="payroll-layout">Folha e contracheque</option>
@@ -104,11 +75,5 @@
     </label>
   </div>
 
-  <div class="button-row">
-    <button id="textCleanupPreview" class="ghost-button" type="button">Gerar preview</button>
-    <button id="textCleanupRun" class="primary-button" type="button">Aplicar limpeza no texto salvo</button>
-  </div>
-
-  <p class="config-note" id="textCleanupFeedback">Aguardando preview.</p>
-  <div id="textCleanupCandidates" class="stack-list"></div>
+  <p class="config-note">Use a pagina de operacao para rodar preview, limpeza ou reprocesso imediato usando estes parametros.</p>
 </article>

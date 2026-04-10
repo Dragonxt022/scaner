@@ -96,11 +96,27 @@ router.get('/config/settings', requireAdminPage, (request, response) => {
 });
 
 router.get('/config/indexing', requireAdminPage, (request, response) => {
-  renderConfigPage(response, request, 'indexing');
+  response.redirect(302, '/config/indexing/run');
+});
+
+router.get('/config/indexing/run', requireAdminPage, (request, response) => {
+  renderConfigPage(response, request, 'indexingRun');
+});
+
+router.get('/config/indexing/settings', requireAdminPage, (request, response) => {
+  renderConfigPage(response, request, 'indexingSettings');
 });
 
 router.get('/config/downloads', requireAdminPage, (request, response) => {
-  renderConfigPage(response, request, 'downloads');
+  response.redirect(302, '/config/downloads/run');
+});
+
+router.get('/config/downloads/run', requireAdminPage, (request, response) => {
+  renderConfigPage(response, request, 'downloadsRun');
+});
+
+router.get('/config/downloads/settings', requireAdminPage, (request, response) => {
+  renderConfigPage(response, request, 'downloadsSettings');
 });
 
 router.get('/config/logs', requireAdminPage, (request, response) => {
@@ -120,15 +136,39 @@ router.get('/config/search-history', requireAdminPage, (request, response) => {
 });
 
 router.get('/config/maintenance', requireAdminPage, (request, response) => {
-  renderConfigPage(response, request, 'maintenance');
+  response.redirect(302, '/config/maintenance/run');
+});
+
+router.get('/config/maintenance/run', requireAdminPage, (request, response) => {
+  renderConfigPage(response, request, 'maintenanceRun');
+});
+
+router.get('/config/maintenance/settings', requireAdminPage, (request, response) => {
+  renderConfigPage(response, request, 'maintenanceSettings');
 });
 
 router.get('/config/enrichment', requireAdminPage, (request, response) => {
-  renderConfigPage(response, request, 'enrichment');
+  response.redirect(302, '/config/enrichment/run');
+});
+
+router.get('/config/enrichment/run', requireAdminPage, (request, response) => {
+  renderConfigPage(response, request, 'enrichmentRun');
+});
+
+router.get('/config/enrichment/settings', requireAdminPage, (request, response) => {
+  renderConfigPage(response, request, 'enrichmentSettings');
 });
 
 router.get('/config/local-library', requireAdminPage, (request, response) => {
-  renderConfigPage(response, request, 'localLibrary');
+  response.redirect(302, '/config/local-library/run');
+});
+
+router.get('/config/local-library/run', requireAdminPage, (request, response) => {
+  renderConfigPage(response, request, 'localLibraryRun');
+});
+
+router.get('/config/local-library/settings', requireAdminPage, (request, response) => {
+  renderConfigPage(response, request, 'localLibrarySettings');
 });
 
 router.get('/config/users', requireAdminPage, (request, response) => {

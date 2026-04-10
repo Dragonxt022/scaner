@@ -36,6 +36,9 @@ const {
   createUser,
   issuePasswordResetCode,
   listPasswordResetRequests,
+  listAccessRequests,
+  approveAccessRequest,
+  rejectAccessRequest,
   updateUser,
 } = require('../services/auth');
 const { listAccessLogs, listSearchLogs, recordAccessLog } = require('../services/audit');
@@ -74,6 +77,55 @@ router.get('/password-reset-requests', (request, response) => {
   response.json({
     items: listPasswordResetRequests(limit),
   });
+});
+
+router.get('/access-requests', (request, response) => {
+  const limit = clampInteger(request.query?.limit, { fallback: 100, min: 1, max: 500 });
+  response.json({
+    items: listAccessRequests(limit),
+  });
+});
+
+router.post('/access-requests/:id/approve', (request, response) => {
+  const id = clampInteger(request.params.id, { fallback: 0, min: 0, max: Number.MAX_SAFE_INTEGER });
+  if (!id) {
+    response.status(400).json({ error: 'Identificador de solicitacao invalido.' });
+    return;
+  }
+
+  try {
+    const result = approveAccessRequest(id, request.authUser?.id || null);
+    recordAccessLog(
+      request,
+      request.authUser,
+      'access_request_approve',
+      `Solicitacao de acesso ${id} aprovada pelo usuario ${request.authUser?.cpf || 'desconhecido'}.`,
+    );
+    response.json(result);
+  } catch (error) {
+    response.status(400).json({ error: error.message });
+  }
+});
+
+router.post('/access-requests/:id/reject', (request, response) => {
+  const id = clampInteger(request.params.id, { fallback: 0, min: 0, max: Number.MAX_SAFE_INTEGER });
+  if (!id) {
+    response.status(400).json({ error: 'Identificador de solicitacao invalido.' });
+    return;
+  }
+
+  try {
+    const result = rejectAccessRequest(id, request.authUser?.id || null);
+    recordAccessLog(
+      request,
+      request.authUser,
+      'access_request_reject',
+      `Solicitacao de acesso ${id} rejeitada pelo usuario ${request.authUser?.cpf || 'desconhecido'}.`,
+    );
+    response.json(result);
+  } catch (error) {
+    response.status(400).json({ error: error.message });
+  }
 });
 
 router.get('/activity/access-logs', (request, response) => {
