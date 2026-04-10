@@ -1427,14 +1427,14 @@
 
     if (elements.reindexStart) {
       elements.reindexStart.addEventListener('click', async () => {
-      const feedback = getFeedbackElement(elements.indexerStatusText, elements.configFeedback);
-      feedback.textContent = 'Iniciando indexacao...';
+        const feedback = getFeedbackElement(elements.indexerStatusText, elements.configFeedback);
+        feedback.textContent = 'Iniciando indexacao...';
         try {
           await runPost('/api/admin/reindex/start', {
-            batchLimit: Number(elements.batchLimit.value || 10),
-          fullProcessIfNeeded: elements.fullProcessToggle ? elements.fullProcessToggle.checked : true,
-          mode: elements.indexMode.value,
-          retryFailures: elements.retryFailuresToggle.checked,
+            batchLimit: Number(elements.batchLimit?.value || 10),
+            fullProcessIfNeeded: elements.fullProcessToggle ? elements.fullProcessToggle.checked : true,
+            mode: String(elements.indexMode?.value || 'hybrid'),
+            retryFailures: elements.retryFailuresToggle ? elements.retryFailuresToggle.checked : false,
           });
           await refreshRuntime();
           feedback.textContent = 'Indexacao iniciada.';
